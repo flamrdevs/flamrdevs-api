@@ -1,36 +1,32 @@
-import { Hono } from "https://deno.land/x/hono@v3.2.5/mod.ts";
-import { cors, compress } from "https://deno.land/x/hono@v3.2.5/middleware.ts";
+import { Hono, cors, compress, headers, json } from "~/libs/hono.ts";
 
-import * as HOST from "~/utils/host.ts";
+import routeTilde from "~/routes/~.ts";
 
-const app = new Hono();
+import { getString } from "~/utils/other.ts";
 
-app.use("*", cors({ origin: "*" }));
-app.use("*", compress());
+const app = new Hono()
 
-app.get("/", (c) => {
-  c.status(200);
-  return c.json({
-    message: "flamrdevs-api",
+  .use("*", cors({ origin: "*" }))
+  .use("*", compress())
+
+  .route("/~", routeTilde)
+
+  .get("/", (c) => {
+    return json(headers(c, { "x-me": "flamrdevs" }), 200, {
+      name: "flamrdevs-api",
+    });
+  })
+
+  .notFound((c) => {
+    return json(c, 404, {
+      message: "not found",
+    });
+  })
+
+  .onError((error, c) => {
+    return json(c, 500, {
+      message: getString(error.message, "internal server error"),
+    });
   });
-});
-
-app.get("/host", (c) => {
-  c.status(200);
-  return c.json({
-    site: HOST.SITE(),
-    static: HOST.STATIC(),
-    web: HOST.WEB(),
-    api: HOST.API(),
-    image: HOST.IMAGE(),
-  });
-});
-
-app.notFound((c) => {
-  c.status(404);
-  return c.json({
-    message: "not found",
-  });
-});
 
 export default app;
