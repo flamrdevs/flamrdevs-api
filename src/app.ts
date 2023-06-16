@@ -1,5 +1,7 @@
 import { Hono, cors, compress, headers, json } from "~/libs/hono.ts";
 
+import cache from "~/libs/@hono/cache.ts";
+
 import routeTilde from "~/routes/~.ts";
 
 import { getString } from "~/utils/other.ts";
@@ -8,6 +10,8 @@ const app = new Hono()
 
   .use("*", cors({ origin: "*" }))
   .use("*", compress())
+
+  .use("*", cache())
 
   .route("/~", routeTilde)
 
