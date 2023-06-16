@@ -1,1 +1,1 @@
-export const __PROD__ = Deno.env.get("DENO_ENV") === "production";
+export const __PROD__ = Deno.env.get("MODE") === "production";
