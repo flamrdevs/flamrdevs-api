@@ -1,0 +1,21 @@
+{
+  "tasks": {
+    "dev": "deno run -A --watch main.ts",
+    "preview": "deno run -A main.ts"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "fmt": {
+    "useTabs": true,
+    "lineWidth": 178,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "include": ["src", "main.ts"]
+  },
+  "importMap": "./import_map.json"
+}
