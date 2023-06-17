@@ -4,7 +4,7 @@ import cache from "~/libs/@hono/cache.ts";
 
 import routeTilde from "~/routes/~.ts";
 
-import { getString } from "~/utils/other.ts";
+import { getString } from "~/utils/string.ts";
 
 const app = new Hono()
 
