@@ -15,6 +15,5 @@ export default new Hono()
   .get("/env", (c) => {
     return json(c, 200, {
       MODE: Deno.env.get("MODE"),
-      PORT: Deno.env.get("PORT"),
     });
   });
