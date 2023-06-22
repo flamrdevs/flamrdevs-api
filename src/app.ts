@@ -3,8 +3,9 @@ import { Hono, cors, compress, headers, json } from "~/libs/hono.ts";
 import cache from "~/libs/@hono/cache.ts";
 
 import routeTilde from "~/routes/~.ts";
+import routeProjects from "~/routes/projects.ts";
 
-import { getString } from "~/utils/string.ts";
+import { isTypeElse } from "~/utils/string.ts";
 
 const app = new Hono()
 
@@ -14,6 +15,8 @@ const app = new Hono()
   .use("*", cache())
 
   .route("/~", routeTilde)
+
+  .route("/projects", routeProjects)
 
   .get("/", (c) => {
     return json(headers(c, { "x-me": "flamrdevs" }), 200, {
@@ -29,7 +32,7 @@ const app = new Hono()
 
   .onError((error, c) => {
     return json(c, 500, {
-      message: getString(error.message, "internal server error"),
+      message: isTypeElse(error.message, "internal server error"),
     });
   });
 
