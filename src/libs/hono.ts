@@ -1,9 +1,8 @@
-export type { Context } from "https://deno.land/x/hono@v3.2.5/mod.ts";
-export { Hono } from "https://deno.land/x/hono@v3.2.5/mod.ts";
-export { HTTPException } from "https://deno.land/x/hono@v3.2.5/http-exception.ts";
-export { cors, compress } from "https://deno.land/x/hono@v3.2.5/middleware.ts";
+export { Hono } from "https://deno.land/x/hono@v3.2.7/mod.ts";
+export type { Context } from "https://deno.land/x/hono@v3.2.7/mod.ts";
 
-import { Context, Next } from "https://deno.land/x/hono@v3.2.5/mod.ts";
+import { Context } from "https://deno.land/x/hono@v3.2.7/mod.ts";
+import type { Next } from "https://deno.land/x/hono@v3.2.7/mod.ts";
 
 type Plugin = (context: Context, next: Next) => Promise<void | Response>;
 
@@ -19,5 +18,13 @@ function json<T>(c: Context, status: number, object: T) {
   return c.json(object);
 }
 
+class APIError {
+  constructor(public status: number, public message: string) {}
+}
+
+const isAPIError = (value: unknown): value is APIError => value instanceof APIError;
+const apierror = (status: number, message: string) => new APIError(status, message);
+
 export { plugin };
 export { headers, json };
+export { APIError, isAPIError, apierror };

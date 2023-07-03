@@ -1,39 +1,34 @@
-import { Hono, cors, compress, headers, json } from "~/libs/hono.ts";
-
-import cache from "~/libs/@hono/cache.ts";
+import { Hono, headers, json, isAPIError } from "~/libs/hono.ts";
+import { cors, compress, cache } from "~/libs/@hono/middlewares.ts";
 
 import routeTilde from "~/routes/~.ts";
+import routeGithub from "~/routes/github.ts";
 import routeProjects from "~/routes/projects.ts";
-
-import { isTypeElse } from "~/utils/string.ts";
 
 const app = new Hono()
 
   .use("*", cors({ origin: "*" }))
   .use("*", compress())
-
   .use("*", cache())
 
   .route("/~", routeTilde)
-
+  .route("/github", routeGithub)
   .route("/projects", routeProjects)
 
-  .get("/", (c) => {
-    return json(headers(c, { "x-me": "flamrdevs" }), 200, {
-      name: "flamrdevs-api",
-    });
-  })
+  .get("/", (c) => json(headers(c, { "x-me": "flamrdevs" }), 200, { name: "api" }))
+  .notFound((c) => json(c, 404, { message: "Not found" }))
+  .onError((error: unknown, c) => {
+    let status = 500;
+    let message = "Internal server error";
 
-  .notFound((c) => {
-    return json(c, 404, {
-      message: "not found",
-    });
-  })
+    if (isAPIError(error)) {
+      status = error.status;
+      message = error.message;
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
 
-  .onError((error, c) => {
-    return json(c, 500, {
-      message: isTypeElse(error.message, "internal server error"),
-    });
+    return json(c, status, { message });
   });
 
 export default app;
