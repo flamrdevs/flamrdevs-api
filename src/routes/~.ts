@@ -1,19 +1,21 @@
-import { Hono, json } from "~/libs/hono.ts";
+import { route, json } from "~/libs/hono.ts";
 
 import * as HOST from "~/utils/host.ts";
 
-export default new Hono()
+export default route((x) =>
+  x
 
-  .get("/", (c) => {
-    return json(c, 200, {
-      endpoints: {
-        "/env": HOST.API("~", "env"),
-      },
-    });
-  })
+    .get("/", (c) => {
+      return json(c, 200, {
+        endpoints: {
+          "/env": HOST.API("~", "env"),
+        },
+      });
+    })
 
-  .get("/env", (c) => {
-    return json(c, 200, {
-      MODE: Deno.env.get("MODE"),
-    });
-  });
+    .get("/env", (c) => {
+      return json(c, 200, {
+        MODE: Deno.env.get("MODE"),
+      });
+    })
+);
