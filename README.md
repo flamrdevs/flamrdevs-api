@@ -32,3 +32,20 @@
     </picture>
   </a>
 </p>
+
+## Tech Stack
+
+<p align="left">
+  <picture title="deno">
+    <source media="(prefers-color-scheme: dark)" srcset="https://flamrdevs.cyclic.app/core/icon-button?theme=dark&icon=deno">
+    <img alt="deno" src="https://flamrdevs.cyclic.app/core/icon-button?theme=light&icon=deno" hspace="1">
+  </picture>
+  <picture title="typescript">
+    <source media="(prefers-color-scheme: dark)" srcset="https://flamrdevs.cyclic.app/core/icon-button?theme=dark&icon=typescript">
+    <img alt="typescript" src="https://flamrdevs.cyclic.app/core/icon-button?theme=light&icon=typescript" hspace="1">
+  </picture>
+</p>
+
+## LICENSE
+
+[MIT License](./LICENSE)
