@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.194.0/testing/asserts.ts";
 
 const create = (res: Response, status: number) => {
   assertEquals(res.status, status);
