@@ -1,3 +1,4 @@
+import * as fetch from "~/libs/fetch.ts";
 import zod from "~/libs/zod.ts";
 
 const UsernameSchema = zod
@@ -43,7 +44,11 @@ const RepoSchema = zod.object({
   stargazers_count: zod.number(),
 });
 
-export type { User, Org, Repo };
+const getUser = (username: string) => fetch.get<User>(`https://api.github.com/users/${username}`);
+const getOrg = (org: string) => fetch.get<Org>(`https://api.github.com/orgs/${org}`);
+const getRepo = (owner: string, repo: string) => fetch.get<Repo>(`https://api.github.com/repos/${owner}/${repo}`);
 
+export type { User, Org, Repo };
 export { UsernameSchema, ReponameSchema };
 export { UserSchema, OrgSchema, RepoSchema };
+export { getUser, getOrg, getRepo };

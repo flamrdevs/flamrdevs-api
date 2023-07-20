@@ -15,7 +15,7 @@ Deno.test("[route] GET /~", async () => {
   res.content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
-      "/env": HOST.API("~", "env"),
+      "/env": HOST.API("~/env"),
     },
   });
 });
@@ -27,14 +27,28 @@ Deno.test("[route] GET /~/env", async () => {
   });
 });
 
+Deno.test("[route] GET /content", async () => {
+  const res = isOk(await fetch.get("/content"));
+  res.content("application/json; charset=UTF-8");
+  await res.json({
+    endpoints: {
+      "/projects": HOST.API("content/projects"),
+    },
+  });
+});
+Deno.test("[route] GET /content/projects", async () => {
+  const res = isOk(await fetch.get("/content/projects"));
+  res.content("application/json; charset=UTF-8");
+});
+
 Deno.test("[route] GET /github", async () => {
   const res = isOk(await fetch.get("/github"));
   res.content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
-      "/users/:username": HOST.API("users", ":username"),
-      "/orgs/:org": HOST.API("orgs", ":org"),
-      "/repos/:owner/:repo": HOST.API("repos", ":owner", ":repo"),
+      "/users/:username": HOST.API("github/users/:username"),
+      "/orgs/:org": HOST.API("github/orgs/:org"),
+      "/repos/:owner/:repo": HOST.API("github/repos/:owner/:repo"),
     },
   });
 });
@@ -66,9 +80,23 @@ Deno.test("[route] GET /github/repos/flamrdevs/klass", async () => {
   res_cache.content("application/json; charset=UTF-8");
 });
 
-Deno.test("[route] GET /projects", async () => {
-  const res = isOk(await fetch.get("/projects"));
+Deno.test("[route] GET /bundlejs", async () => {
+  const res = isOk(await fetch.get("/bundlejs"));
   res.content("application/json; charset=UTF-8");
+  await res.json({
+    endpoints: {
+      "/:name{.+$}": HOST.API("bundlejs/:name{.+$}"),
+    },
+  });
+});
+Deno.test("[route] GET /bundlejs/@klass/core", async () => {
+  const res = isOk(await fetch.get("/bundlejs/@klass/core"));
+  res.headers("x-cache", "false");
+  res.content("application/json; charset=UTF-8");
+
+  const res_cache = isOk(await fetch.get("/bundlejs/@klass/core"));
+  res_cache.headers("x-cache", "true");
+  res_cache.content("application/json; charset=UTF-8");
 });
 
 Deno.test("[route] GET /", async () => {

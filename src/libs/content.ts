@@ -1,5 +1,3 @@
-import { route, json } from "~/libs/hono.ts";
-
 type Tag = "npm" | "preact" | "react" | "solid" | "svelte" | "vue";
 
 interface IProject {
@@ -85,8 +83,4 @@ const projects: IProject[] = [
   },
 ];
 
-export default route((x) =>
-  x.get("/", (c) => {
-    return json(c, 200, projects);
-  })
-);
+export { projects };
