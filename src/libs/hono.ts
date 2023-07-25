@@ -1,8 +1,8 @@
-export { Hono } from "https://deno.land/x/hono@v3.3.1/mod.ts";
-export type { Context } from "https://deno.land/x/hono@v3.3.1/mod.ts";
+export { Hono } from "https://deno.land/x/hono@v3.3.3/mod.ts";
+export type { Context } from "https://deno.land/x/hono@v3.3.3/mod.ts";
 
-import { Context, Hono } from "https://deno.land/x/hono@v3.3.1/mod.ts";
-import type { Next } from "https://deno.land/x/hono@v3.3.1/mod.ts";
+import { Context, Hono } from "https://deno.land/x/hono@v3.3.3/mod.ts";
+import type { Next } from "https://deno.land/x/hono@v3.3.3/mod.ts";
 
 type Plugin = (context: Context, next: Next) => Promise<void | Response>;
 
