@@ -4,6 +4,7 @@ import { cors, compress, cache } from "~/libs/@hono/middlewares.ts";
 import routeTilde from "~/routes/~.ts";
 import routeContent from "~/routes/content.ts";
 import routeGithub from "~/routes/github.ts";
+import routeNPM from "~/routes/npm.ts";
 import routeBundlejs from "~/routes/bundlejs.ts";
 
 const app = new Hono()
@@ -15,6 +16,7 @@ const app = new Hono()
   .route("/~", routeTilde)
   .route("/content", routeContent)
   .route("/github", routeGithub)
+  .route("/npm", routeNPM)
   .route("/bundlejs", routeBundlejs)
 
   .get("/", (c) => json(headers(c, { "x-me": "flamrdevs" }), 200, { name: "api" }))

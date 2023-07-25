@@ -1,14 +1,9 @@
 import * as fetch from "~/libs/fetch.ts";
 import zod from "~/libs/zod.ts";
 
-const PackagenameSchema = zod
-  .string()
-  .regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/, { message: "Invalid NPM package name" })
-  .refine((value) => !value.endsWith("-"), { message: "Package name cannot end with a hyphen" });
+type Bundle = zod.infer<typeof BundleSchema>;
 
-type Package = zod.infer<typeof PackageSchema>;
-
-const PackageSchema = zod.object({
+const BundleSchema = zod.object({
   version: zod.string(),
   size: zod.object({
     type: zod.string(),
@@ -20,9 +15,8 @@ const PackageSchema = zod.object({
   }),
 });
 
-const getPackage = (name: string) => fetch.get<Package>(`https://deno.bundlejs.com/?q=${name}`);
+const getBundle = (name: string) => fetch.get<Bundle>(`https://deno.bundlejs.com/?q=${name}`);
 
-export type { Package };
-export { PackagenameSchema };
-export { PackageSchema };
-export { getPackage };
+export type { Bundle };
+export { BundleSchema };
+export { getBundle };

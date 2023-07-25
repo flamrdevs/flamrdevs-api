@@ -80,21 +80,80 @@ Deno.test("[route] GET /github/repos/flamrdevs/klass", async () => {
   res_cache.content("application/json; charset=UTF-8");
 });
 
+Deno.test("[route] GET /npm", async () => {
+  const res = isOk(await fetch.get("/npm"));
+  res.content("application/json; charset=UTF-8");
+  await res.json({
+    endpoints: {
+      "/~/:name{.+$}": HOST.API("npm/~/:name{.+$}"),
+      "/dpw/:name{.+$}": HOST.API("npm/dpw/:name{.+$}"),
+      "/dpm/:name{.+$}": HOST.API("npm/dpm/:name{.+$}"),
+      "/drw/:name{.+$}": HOST.API("npm/drw/:name{.+$}"),
+      "/drm/:name{.+$}": HOST.API("npm/drm/:name{.+$}"),
+    },
+  });
+});
+Deno.test("[route] GET /npm/~/@klass/core", async () => {
+  const res = isOk(await fetch.get("/npm/~/@klass/core"));
+  res.headers("x-cache", "false");
+  res.content("application/json; charset=UTF-8");
+
+  const res_cache = isOk(await fetch.get("/npm/~/@klass/core"));
+  res_cache.headers("x-cache", "true");
+  res_cache.content("application/json; charset=UTF-8");
+});
+Deno.test("[route] GET /npm/dpw/@klass/core", async () => {
+  const res = isOk(await fetch.get("/npm/dpw/@klass/core"));
+  res.headers("x-cache", "false");
+  res.content("application/json; charset=UTF-8");
+
+  const res_cache = isOk(await fetch.get("/npm/dpw/@klass/core"));
+  res_cache.headers("x-cache", "true");
+  res_cache.content("application/json; charset=UTF-8");
+});
+Deno.test("[route] GET /npm/dpm/@klass/core", async () => {
+  const res = isOk(await fetch.get("/npm/dpm/@klass/core"));
+  res.headers("x-cache", "false");
+  res.content("application/json; charset=UTF-8");
+
+  const res_cache = isOk(await fetch.get("/npm/dpm/@klass/core"));
+  res_cache.headers("x-cache", "true");
+  res_cache.content("application/json; charset=UTF-8");
+});
+Deno.test("[route] GET /npm/drw/@klass/core", async () => {
+  const res = isOk(await fetch.get("/npm/drw/@klass/core"));
+  res.headers("x-cache", "false");
+  res.content("application/json; charset=UTF-8");
+
+  const res_cache = isOk(await fetch.get("/npm/drw/@klass/core"));
+  res_cache.headers("x-cache", "true");
+  res_cache.content("application/json; charset=UTF-8");
+});
+Deno.test("[route] GET /npm/drm/@klass/core", async () => {
+  const res = isOk(await fetch.get("/npm/drm/@klass/core"));
+  res.headers("x-cache", "false");
+  res.content("application/json; charset=UTF-8");
+
+  const res_cache = isOk(await fetch.get("/npm/drm/@klass/core"));
+  res_cache.headers("x-cache", "true");
+  res_cache.content("application/json; charset=UTF-8");
+});
+
 Deno.test("[route] GET /bundlejs", async () => {
   const res = isOk(await fetch.get("/bundlejs"));
   res.content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
-      "/:name{.+$}": HOST.API("bundlejs/:name{.+$}"),
+      "/~/:name{.+$}": HOST.API("bundlejs/~/:name{.+$}"),
     },
   });
 });
-Deno.test("[route] GET /bundlejs/@klass/core", async () => {
-  const res = isOk(await fetch.get("/bundlejs/@klass/core"));
+Deno.test("[route] GET /bundlejs/~/@klass/core", async () => {
+  const res = isOk(await fetch.get("/bundlejs/~/@klass/core"));
   res.headers("x-cache", "false");
   res.content("application/json; charset=UTF-8");
 
-  const res_cache = isOk(await fetch.get("/bundlejs/@klass/core"));
+  const res_cache = isOk(await fetch.get("/bundlejs/~/@klass/core"));
   res_cache.headers("x-cache", "true");
   res_cache.content("application/json; charset=UTF-8");
 });
