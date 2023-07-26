@@ -1,5 +1,7 @@
 Deno.env.set("MODE", "development");
 
+import { valibot } from "~/libs/exports.ts";
+
 import { HOST } from "~/utils/exports.ts";
 import { isOk, isNotFound, isApplicationJSON } from "~/utils/test.ts";
 
@@ -106,10 +108,24 @@ Deno.test("[route] GET /bundlejs/~/@klass/core", async () => {
 });
 
 Deno.test("[route] GET /", async () => {
-  const res = isOk(await fetch.get("/"))
-    .headers("x-me", "flamrdevs")
-    .content("application/json; charset=UTF-8");
-  await res.json({ name: "api" });
+  const res = isOk(await fetch.get("/")).content("application/json; charset=UTF-8");
+
+  await res
+    .valibot(
+      valibot.object({
+        "x-me": valibot.string(),
+        "x-id": valibot.string(),
+      })
+    )
+    .headers();
+  await res
+    .valibot(
+      valibot.object({
+        name: valibot.string(),
+        build: valibot.string(),
+      })
+    )
+    .json();
 });
 Deno.test("[route] GET /not-found", async () => {
   const res = isNotFound(await fetch.get("/not-found")).content("application/json; charset=UTF-8");

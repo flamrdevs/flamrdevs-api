@@ -1,4 +1,4 @@
-import type { ValiError } from "https://esm.sh/valibot@0.2.1";
+import type { ValiError } from "valibot";
 
 const firstErrorMessage = <
   T extends {
@@ -25,6 +25,6 @@ export {
   regex,
   useDefault,
   safeParseAsync,
-} from "https://esm.sh/valibot@0.2.1";
-export type { Output } from "https://esm.sh/valibot@0.2.1";
+} from "valibot";
+export type { BaseSchema, BaseSchemaAsync, Output } from "valibot";
 export { firstErrorMessage };

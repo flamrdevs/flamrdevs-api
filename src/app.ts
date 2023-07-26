@@ -1,4 +1,4 @@
-import { hono } from "~/libs/exports.ts";
+import { dayjs, hono, nanoid } from "~/libs/exports.ts";
 import { cors, compress, cache } from "~/libs/@hono/middlewares.ts";
 
 import routeTilde from "~/routes/~.ts";
@@ -6,6 +6,9 @@ import routeContent from "~/routes/content.ts";
 import routeGithub from "~/routes/github.ts";
 import routeNPM from "~/routes/npm.ts";
 import routeBundlejs from "~/routes/bundlejs.ts";
+
+const build = dayjs.create().format("[DDMMYYYY]");
+const id = nanoid.create();
 
 const app = hono
   .create()
@@ -20,7 +23,7 @@ const app = hono
   .route("/npm", routeNPM)
   .route("/bundlejs", routeBundlejs)
 
-  .get("/", (c) => c.json({ name: "api" }, 200, { "x-me": "flamrdevs" }))
+  .get("/", (c) => c.json({ name: "api", build }, 200, { "x-me": "flamrdevs", "x-id": id }))
   .notFound((c) => c.json({ message: "Not found" }, 404))
   .onError((error: unknown, c) => {
     let status = 500;
