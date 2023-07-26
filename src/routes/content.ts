@@ -1,9 +1,8 @@
-import { route } from "~/libs/hono.ts";
-import { projects } from "~/libs/content.ts";
+import { content, hono } from "~/libs/exports.ts";
 
 import { HOST } from "~/utils/exports.ts";
 
-export default route((x) =>
+export default hono.route((x) =>
   x
 
     .get("/", (c) => {
@@ -15,6 +14,6 @@ export default route((x) =>
     })
 
     .get("/projects", (c) => {
-      return c.json(projects);
+      return c.json(content.projects);
     })
 );

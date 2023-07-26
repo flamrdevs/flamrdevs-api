@@ -23,4 +23,10 @@ const isOk = (res: Response) => create(res, 200);
 const isBadRequest = (res: Response) => create(res, 400);
 const isNotFound = (res: Response) => create(res, 404);
 
-export { isOk, isBadRequest, isNotFound };
+const isApplicationJSON = (instance: ReturnType<typeof create>, options: { cache: boolean }) => {
+  instance.content("application/json; charset=UTF-8");
+  instance.headers("x-cache", `${options.cache}`);
+  return instance;
+};
+
+export { isOk, isBadRequest, isNotFound, isApplicationJSON };

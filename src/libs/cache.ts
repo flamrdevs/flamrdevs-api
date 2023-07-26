@@ -5,7 +5,7 @@ type Item<T> = {
   v: T;
 };
 
-const cache = <T>(defaultAge = time.day(1)) => {
+const create = <T>(defaultAge = time.day(1)) => {
   const map = new Map<string, Item<T>>();
 
   return {
@@ -20,4 +20,4 @@ const cache = <T>(defaultAge = time.day(1)) => {
   };
 };
 
-export default cache;
+export { create };

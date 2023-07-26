@@ -1,4 +1,4 @@
-import { Hono, APIError } from "~/libs/hono.ts";
+import { hono } from "~/libs/exports.ts";
 import { cors, compress, cache } from "~/libs/@hono/middlewares.ts";
 
 import routeTilde from "~/routes/~.ts";
@@ -7,7 +7,8 @@ import routeGithub from "~/routes/github.ts";
 import routeNPM from "~/routes/npm.ts";
 import routeBundlejs from "~/routes/bundlejs.ts";
 
-const app = new Hono()
+const app = hono
+  .create()
 
   .use("*", cors({ origin: "*" }))
   .use("*", compress())
@@ -25,7 +26,7 @@ const app = new Hono()
     let status = 500;
     let message = "Internal server error";
 
-    if (APIError.is(error)) {
+    if (hono.APIError.is(error)) {
       status = error.status;
       message = error.message;
     } else if (error instanceof Error) {

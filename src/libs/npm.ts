@@ -1,38 +1,37 @@
-import { fetch } from "~/libs/exports.ts";
-import zod from "~/libs/zod.ts";
+import { fetch, valibot } from "~/libs/exports.ts";
 
-const PackagenameSchema = zod
-  .string()
-  .regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/, { message: "Invalid NPM package name" })
-  .refine((value) => !value.endsWith("-"), { message: "Package name cannot end with a hyphen" });
+const PackagenameSchema = valibot.string([
+  valibot.regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/, "Invalid NPM package name"),
+  valibot.regex(/^(?!.*-$)[\s\S]*$/, "Package name cannot end with a hyphen"),
+]);
 
-type Package = zod.infer<typeof PackageSchema>;
+type Package = valibot.Output<typeof PackageSchema>;
 
-const PackageSchema = zod.object({
-  name: zod.string(),
-  version: zod.string(),
-  description: zod.string().optional(),
+const PackageSchema = valibot.object({
+  name: valibot.string(),
+  version: valibot.string(),
+  description: valibot.optional(valibot.string()),
 });
 
-type DownloadsPoint = zod.infer<typeof DownloadsPointSchema>;
+type DownloadsPoint = valibot.Output<typeof DownloadsPointSchema>;
 
-const DownloadsPointSchema = zod.object({
-  package: zod.string(),
-  start: zod.string(),
-  end: zod.string(),
-  downloads: zod.number(),
+const DownloadsPointSchema = valibot.object({
+  package: valibot.string(),
+  start: valibot.string(),
+  end: valibot.string(),
+  downloads: valibot.number(),
 });
 
-type DownloadsRange = zod.infer<typeof DownloadsRangeSchema>;
+type DownloadsRange = valibot.Output<typeof DownloadsRangeSchema>;
 
-const DownloadsRangeSchema = zod.object({
-  package: zod.string(),
-  start: zod.string(),
-  end: zod.string(),
-  downloads: zod.array(
-    zod.object({
-      day: zod.string(),
-      downloads: zod.number(),
+const DownloadsRangeSchema = valibot.object({
+  package: valibot.string(),
+  start: valibot.string(),
+  end: valibot.string(),
+  downloads: valibot.array(
+    valibot.object({
+      day: valibot.string(),
+      downloads: valibot.number(),
     })
   ),
 });

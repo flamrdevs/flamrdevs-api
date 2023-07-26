@@ -1,8 +1,8 @@
-import { route } from "~/libs/hono.ts";
+import { hono } from "~/libs/exports.ts";
 
 import { HOST } from "~/utils/exports.ts";
 
-export default route((x) =>
+export default hono.route((x) =>
   x
 
     .get("/", (c) => {

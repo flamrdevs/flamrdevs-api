@@ -1,7 +1,7 @@
 Deno.env.set("MODE", "development");
 
 import { HOST } from "~/utils/exports.ts";
-import { isOk, isNotFound } from "~/utils/test.ts";
+import { isOk, isNotFound, isApplicationJSON } from "~/utils/test.ts";
 
 import app from "~/app.ts";
 
@@ -10,8 +10,7 @@ const fetch = {
 };
 
 Deno.test("[route] GET /~", async () => {
-  const res = isOk(await fetch.get("/~"));
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/~")).content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
       "/env": HOST.API("~/env"),
@@ -19,16 +18,14 @@ Deno.test("[route] GET /~", async () => {
   });
 });
 Deno.test("[route] GET /~/env", async () => {
-  const res = isOk(await fetch.get("/~/env"));
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/~/env")).content("application/json; charset=UTF-8");
   await res.json({
     MODE: Deno.env.get("MODE"),
   });
 });
 
 Deno.test("[route] GET /content", async () => {
-  const res = isOk(await fetch.get("/content"));
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/content")).content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
       "/projects": HOST.API("content/projects"),
@@ -36,13 +33,11 @@ Deno.test("[route] GET /content", async () => {
   });
 });
 Deno.test("[route] GET /content/projects", async () => {
-  const res = isOk(await fetch.get("/content/projects"));
-  res.content("application/json; charset=UTF-8");
+  isOk(await fetch.get("/content/projects")).content("application/json; charset=UTF-8");
 });
 
 Deno.test("[route] GET /github", async () => {
-  const res = isOk(await fetch.get("/github"));
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/github")).content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
       "/users/:username": HOST.API("github/users/:username"),
@@ -52,36 +47,20 @@ Deno.test("[route] GET /github", async () => {
   });
 });
 Deno.test("[route] GET /github/users/flamrdevs", async () => {
-  const res = isOk(await fetch.get("/github/users/flamrdevs"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/github/users/flamrdevs"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/github/users/flamrdevs")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/github/users/flamrdevs")), { cache: true });
 });
 Deno.test("[route] GET /github/orgs/indonesia-api", async () => {
-  const res = isOk(await fetch.get("/github/orgs/indonesia-api"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/github/orgs/indonesia-api"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/github/orgs/indonesia-api")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/github/orgs/indonesia-api")), { cache: true });
 });
 Deno.test("[route] GET /github/repos/flamrdevs/klass", async () => {
-  const res = isOk(await fetch.get("/github/repos/flamrdevs/klass"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/github/repos/flamrdevs/klass"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/github/repos/flamrdevs/klass")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/github/repos/flamrdevs/klass")), { cache: true });
 });
 
 Deno.test("[route] GET /npm", async () => {
-  const res = isOk(await fetch.get("/npm"));
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/npm")).content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
       "/~/:name{.+$}": HOST.API("npm/~/:name{.+$}"),
@@ -93,54 +72,28 @@ Deno.test("[route] GET /npm", async () => {
   });
 });
 Deno.test("[route] GET /npm/~/@klass/core", async () => {
-  const res = isOk(await fetch.get("/npm/~/@klass/core"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/npm/~/@klass/core"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/npm/~/@klass/core")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/npm/~/@klass/core")), { cache: true });
 });
 Deno.test("[route] GET /npm/dpw/@klass/core", async () => {
-  const res = isOk(await fetch.get("/npm/dpw/@klass/core"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/npm/dpw/@klass/core"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/npm/dpw/@klass/core")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/npm/dpw/@klass/core")), { cache: true });
 });
 Deno.test("[route] GET /npm/dpm/@klass/core", async () => {
-  const res = isOk(await fetch.get("/npm/dpm/@klass/core"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/npm/dpm/@klass/core"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/npm/dpm/@klass/core")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/npm/dpm/@klass/core")), { cache: true });
 });
 Deno.test("[route] GET /npm/drw/@klass/core", async () => {
-  const res = isOk(await fetch.get("/npm/drw/@klass/core"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/npm/drw/@klass/core"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/npm/drw/@klass/core")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/npm/drw/@klass/core")), { cache: true });
 });
 Deno.test("[route] GET /npm/drm/@klass/core", async () => {
-  const res = isOk(await fetch.get("/npm/drm/@klass/core"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/npm/drm/@klass/core"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/npm/drm/@klass/core")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/npm/drm/@klass/core")), { cache: true });
 });
 
 Deno.test("[route] GET /bundlejs", async () => {
-  const res = isOk(await fetch.get("/bundlejs"));
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/bundlejs")).content("application/json; charset=UTF-8");
   await res.json({
     endpoints: {
       "/~/:name{.+$}": HOST.API("bundlejs/~/:name{.+$}"),
@@ -148,23 +101,17 @@ Deno.test("[route] GET /bundlejs", async () => {
   });
 });
 Deno.test("[route] GET /bundlejs/~/@klass/core", async () => {
-  const res = isOk(await fetch.get("/bundlejs/~/@klass/core"));
-  res.headers("x-cache", "false");
-  res.content("application/json; charset=UTF-8");
-
-  const res_cache = isOk(await fetch.get("/bundlejs/~/@klass/core"));
-  res_cache.headers("x-cache", "true");
-  res_cache.content("application/json; charset=UTF-8");
+  isApplicationJSON(isOk(await fetch.get("/bundlejs/~/@klass/core")), { cache: false });
+  isApplicationJSON(isOk(await fetch.get("/bundlejs/~/@klass/core")), { cache: true });
 });
 
 Deno.test("[route] GET /", async () => {
-  const res = isOk(await fetch.get("/"));
-  res.headers("x-me", "flamrdevs");
-  res.content("application/json; charset=UTF-8");
+  const res = isOk(await fetch.get("/"))
+    .headers("x-me", "flamrdevs")
+    .content("application/json; charset=UTF-8");
   await res.json({ name: "api" });
 });
 Deno.test("[route] GET /not-found", async () => {
-  const res = isNotFound(await fetch.get("/not-found"));
-  res.content("application/json; charset=UTF-8");
+  const res = isNotFound(await fetch.get("/not-found")).content("application/json; charset=UTF-8");
   await res.json({ message: "Not found" });
 });
