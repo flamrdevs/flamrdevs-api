@@ -1,4 +1,4 @@
-import { Hono, headers, json, isAPIError } from "~/libs/hono.ts";
+import { Hono, APIError } from "~/libs/hono.ts";
 import { cors, compress, cache } from "~/libs/@hono/middlewares.ts";
 
 import routeTilde from "~/routes/~.ts";
@@ -19,20 +19,20 @@ const app = new Hono()
   .route("/npm", routeNPM)
   .route("/bundlejs", routeBundlejs)
 
-  .get("/", (c) => json(headers(c, { "x-me": "flamrdevs" }), 200, { name: "api" }))
-  .notFound((c) => json(c, 404, { message: "Not found" }))
+  .get("/", (c) => c.json({ name: "api" }, 200, { "x-me": "flamrdevs" }))
+  .notFound((c) => c.json({ message: "Not found" }, 404))
   .onError((error: unknown, c) => {
     let status = 500;
     let message = "Internal server error";
 
-    if (isAPIError(error)) {
+    if (APIError.is(error)) {
       status = error.status;
       message = error.message;
     } else if (error instanceof Error) {
       message = error.message;
     }
 
-    return json(c, status, { message });
+    return c.json({ message }, status);
   });
 
 export default app;

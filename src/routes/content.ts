@@ -1,13 +1,13 @@
-import { route, json } from "~/libs/hono.ts";
+import { route } from "~/libs/hono.ts";
 import { projects } from "~/libs/content.ts";
 
-import * as HOST from "~/utils/host.ts";
+import { HOST } from "~/utils/exports.ts";
 
 export default route((x) =>
   x
 
     .get("/", (c) => {
-      return json(c, 200, {
+      return c.json({
         endpoints: {
           "/projects": HOST.API("content/projects"),
         },
@@ -15,6 +15,6 @@ export default route((x) =>
     })
 
     .get("/projects", (c) => {
-      return json(c, 200, projects);
+      return c.json(projects);
     })
 );

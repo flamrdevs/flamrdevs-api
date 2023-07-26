@@ -1,4 +1,4 @@
-import * as time from "~/libs/time.ts";
+import { time } from "~/libs/exports.ts";
 
 type Item<T> = {
   e: number;

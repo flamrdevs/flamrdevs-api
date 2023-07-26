@@ -1,10 +1,10 @@
-import { route, headers, json, apierror } from "~/libs/hono.ts";
+import { route, APIError } from "~/libs/hono.ts";
 import { UsernameSchema, ReponameSchema, UserSchema, OrgSchema, RepoSchema, getUser, getOrg, getRepo } from "~/libs/github.ts";
 import type { User, Org, Repo } from "~/libs/github.ts";
 import cache from "~/libs/cache.ts";
 import zod, { firstErrorMessage } from "~/libs/zod.ts";
 
-import * as HOST from "~/utils/host.ts";
+import { HEADERS, HOST } from "~/utils/exports.ts";
 
 const UserParamSchema = zod.object({ username: UsernameSchema });
 const UserCache = cache<User>();
@@ -19,7 +19,7 @@ export default route((x) =>
   x
 
     .get("/", (c) => {
-      return json(c, 200, {
+      return c.json({
         endpoints: {
           "/users/:username": HOST.API("github/users/:username"),
           "/orgs/:org": HOST.API("github/orgs/:org"),
@@ -36,16 +36,16 @@ export default route((x) =>
         const key = username;
 
         const cached = UserCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await UserSchema.safeParseAsync(await getUser(username));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, UserCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(UserCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/orgs/:org", async (c) => {
@@ -56,16 +56,16 @@ export default route((x) =>
         const key = org;
 
         const cached = OrgCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await OrgSchema.safeParseAsync(await getOrg(org));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, OrgCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(OrgCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/repos/:owner/:repo", async (c) => {
@@ -76,15 +76,15 @@ export default route((x) =>
         const key = `${owner}/${repo}`;
 
         const cached = RepoCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await RepoSchema.safeParseAsync(await getRepo(owner, repo));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, RepoCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(RepoCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 );

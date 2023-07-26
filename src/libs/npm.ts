@@ -1,4 +1,4 @@
-import * as fetch from "~/libs/fetch.ts";
+import { fetch } from "~/libs/exports.ts";
 import zod from "~/libs/zod.ts";
 
 const PackagenameSchema = zod

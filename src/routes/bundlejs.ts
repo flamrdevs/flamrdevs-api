@@ -1,11 +1,11 @@
-import { route, headers, json, apierror } from "~/libs/hono.ts";
+import { route, APIError } from "~/libs/hono.ts";
 import { PackagenameSchema } from "~/libs/npm.ts";
 import { BundleSchema, getBundle } from "~/libs/bundlejs.ts";
 import type { Bundle } from "~/libs/bundlejs.ts";
 import cache from "~/libs/cache.ts";
 import zod, { firstErrorMessage } from "~/libs/zod.ts";
 
-import * as HOST from "~/utils/host.ts";
+import { HEADERS, HOST } from "~/utils/exports.ts";
 
 const BundleParamSchema = zod.object({ name: PackagenameSchema });
 const BundleCache = cache<Bundle>();
@@ -14,7 +14,7 @@ export default route((x) =>
   x
 
     .get("/", (c) => {
-      return json(c, 200, {
+      return c.json({
         endpoints: {
           "/~/:name{.+$}": HOST.API("bundlejs/~/:name{.+$}"),
         },
@@ -29,15 +29,15 @@ export default route((x) =>
         const key = name;
 
         const cached = BundleCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await BundleSchema.safeParseAsync(await getBundle(name));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, BundleCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(BundleCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 );

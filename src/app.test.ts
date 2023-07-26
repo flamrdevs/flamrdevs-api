@@ -1,8 +1,7 @@
 Deno.env.set("MODE", "development");
 
+import { HOST } from "~/utils/exports.ts";
 import { isOk, isNotFound } from "~/utils/test.ts";
-
-import * as HOST from "~/utils/host.ts";
 
 import app from "~/app.ts";
 

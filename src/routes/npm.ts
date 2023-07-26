@@ -1,4 +1,4 @@
-import { route, headers, json, apierror } from "~/libs/hono.ts";
+import { route, APIError } from "~/libs/hono.ts";
 import {
   PackagenameSchema,
   PackageSchema,
@@ -14,7 +14,7 @@ import type { Package, DownloadsPoint, DownloadsRange } from "~/libs/npm.ts";
 import cache from "~/libs/cache.ts";
 import zod, { firstErrorMessage } from "~/libs/zod.ts";
 
-import * as HOST from "~/utils/host.ts";
+import { HEADERS, HOST } from "~/utils/exports.ts";
 
 const PackageParamSchema = zod.object({ name: PackagenameSchema });
 const PackageCache = cache<Package>();
@@ -27,7 +27,7 @@ export default route((x) =>
   x
 
     .get("/", (c) => {
-      return json(c, 200, {
+      return c.json({
         endpoints: {
           "/~/:name{.+$}": HOST.API("npm/~/:name{.+$}"),
           "/dpw/:name{.+$}": HOST.API("npm/dpw/:name{.+$}"),
@@ -46,16 +46,16 @@ export default route((x) =>
         const key = name;
 
         const cached = PackageCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await PackageSchema.safeParseAsync(await getPackage(name));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, PackageCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(PackageCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/dpw/:name{.+$}", async (c) => {
@@ -66,16 +66,16 @@ export default route((x) =>
         const key = name;
 
         const cached = DownloadsPointWeekCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await DownloadsPointSchema.safeParseAsync(await getWeekDownloadsPoint(name));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, DownloadsPointWeekCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(DownloadsPointWeekCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/dpm/:name{.+$}", async (c) => {
@@ -86,16 +86,16 @@ export default route((x) =>
         const key = name;
 
         const cached = DownloadsPointMonthCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await DownloadsPointSchema.safeParseAsync(await getMonthDownloadsPoint(name));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, DownloadsPointMonthCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(DownloadsPointMonthCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/drw/:name{.+$}", async (c) => {
@@ -106,16 +106,16 @@ export default route((x) =>
         const key = name;
 
         const cached = DownloadsRangeWeekCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await DownloadsRangeSchema.safeParseAsync(await getWeekDownloadsRange(name));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, DownloadsRangeWeekCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(DownloadsRangeWeekCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/drm/:name{.+$}", async (c) => {
@@ -126,15 +126,15 @@ export default route((x) =>
         const key = name;
 
         const cached = DownloadsRangeMonthCache.get(key);
-        if (typeof cached !== "undefined") return json(headers(c, { "x-cache": "true" }), 200, cached);
+        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
         const parsedData = await DownloadsRangeSchema.safeParseAsync(await getMonthDownloadsRange(name));
 
-        if (parsedData.success) return json(headers(c, { "x-cache": "false" }), 200, DownloadsRangeMonthCache.set(key, parsedData.data));
+        if (parsedData.success) return c.json(DownloadsRangeMonthCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw apierror(400, firstErrorMessage(parsedData, "Invalid data"));
+        throw new APIError(400, firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw apierror(400, firstErrorMessage(parsedParam, "Invalid param"));
+      throw new APIError(400, firstErrorMessage(parsedParam, "Invalid param"));
     })
 );
