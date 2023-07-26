@@ -7,7 +7,7 @@ import routeGithub from "~/routes/github.ts";
 import routeNPM from "~/routes/npm.ts";
 import routeBundlejs from "~/routes/bundlejs.ts";
 
-const build = dayjs.create().format("[DDMMYYYY]");
+const build = dayjs.create().format("DD-MM-YYYY");
 const id = nanoid.create();
 
 const app = hono
