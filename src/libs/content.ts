@@ -1,4 +1,21 @@
-type Tag = "npm" | "preact" | "react" | "solid" | "svelte" | "vue";
+type Tag =
+  | "astro"
+  | "cloudflare-pages"
+  | "deno"
+  | "fastify"
+  | "hono"
+  | "netlify"
+  | "node"
+  | "npm"
+  | "preact"
+  | "react"
+  | "solid"
+  | "svelte"
+  | "tailwindcss"
+  | "turborepo"
+  | "vanilla-extract"
+  | "vercel"
+  | "vue";
 
 interface IProject {
   name: string;
@@ -10,6 +27,34 @@ interface IProject {
 }
 
 const projects: IProject[] = [
+  {
+    name: "flamrdevs-home",
+    description: "primary apps",
+    slug: "flamrdevs-home",
+    repo: "https://github.com/flamrdevs/flamrdevs-home",
+    tags: ["astro", "netlify", "solid", "turborepo", "vanilla-extract", "vercel"],
+  },
+  {
+    name: "flamrdevs-static",
+    description: "static app",
+    slug: "flamrdevs-static",
+    repo: "https://github.com/flamrdevs/flamrdevs-static",
+    tags: ["astro", "cloudflare-pages", "solid", "tailwindcss"],
+  },
+  {
+    name: "flamrdevs-api",
+    description: "api app",
+    slug: "flamrdevs-api",
+    repo: "https://github.com/flamrdevs/flamrdevs-api",
+    tags: ["deno", "hono"],
+  },
+  {
+    name: "flamrdevs-image",
+    description: "image app",
+    slug: "flamrdevs-image",
+    repo: "https://github.com/flamrdevs/flamrdevs-image",
+    tags: ["fastify", "node"],
+  },
   {
     name: "klass",
     description: "A class variant utility library",
