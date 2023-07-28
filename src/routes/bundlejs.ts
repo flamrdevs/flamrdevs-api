@@ -1,6 +1,6 @@
 import { bundlejs, cache, hono, npm, valibot } from "~/libs/exports.ts";
 
-import { HEADERS, HOST } from "~/utils/exports.ts";
+import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
 const BundleParamSchema = valibot.object({ name: npm.PackagenameSchema });
 const BundleCache = cache.create<bundlejs.Bundle>();
@@ -8,7 +8,7 @@ const BundleCache = cache.create<bundlejs.Bundle>();
 export default hono.route((x) =>
   x
 
-    .get("/", (c) => {
+    .get("/", MIDDLEWARES.cache30D, (c) => {
       return c.json({
         endpoints: {
           "/~/:name{.+$}": HOST.API("bundlejs/~/:name{.+$}"),
@@ -16,7 +16,7 @@ export default hono.route((x) =>
       });
     })
 
-    .get("/~/:name{.+$}", async (c) => {
+    .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(BundleParamSchema, c.req.param());
 
       if (parsedParam.success) {

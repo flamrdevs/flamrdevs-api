@@ -1,6 +1,6 @@
 import { cache, github, hono, valibot } from "~/libs/exports.ts";
 
-import { HEADERS, HOST } from "~/utils/exports.ts";
+import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
 const UserParamSchema = valibot.object({ username: github.UsernameSchema });
 const UserCache = cache.create<github.User>();
@@ -14,7 +14,7 @@ const RepoCache = cache.create<github.Repo>();
 export default hono.route((x) =>
   x
 
-    .get("/", (c) => {
+    .get("/", MIDDLEWARES.cache30D, (c) => {
       return c.json({
         endpoints: {
           "/users/:username": HOST.API("github/users/:username"),
@@ -24,7 +24,7 @@ export default hono.route((x) =>
       });
     })
 
-    .get("/users/:username", async (c) => {
+    .get("/users/:username", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(UserParamSchema, c.req.param());
 
       if (parsedParam.success) {
@@ -44,7 +44,7 @@ export default hono.route((x) =>
       throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
-    .get("/orgs/:org", async (c) => {
+    .get("/orgs/:org", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(OrgParamSchema, c.req.param());
 
       if (parsedParam.success) {
@@ -64,7 +64,7 @@ export default hono.route((x) =>
       throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
-    .get("/repos/:owner/:repo", async (c) => {
+    .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(RepoParamSchema, c.req.param());
 
       if (parsedParam.success) {

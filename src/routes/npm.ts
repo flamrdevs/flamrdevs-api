@@ -1,6 +1,6 @@
 import { cache, hono, npm, valibot } from "~/libs/exports.ts";
 
-import { HEADERS, HOST } from "~/utils/exports.ts";
+import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
 const PackageParamSchema = valibot.object({ name: npm.PackagenameSchema });
 const PackageCache = cache.create<npm.Package>();
@@ -12,7 +12,7 @@ const DownloadsRangeMonthCache = cache.create<npm.DownloadsRange>();
 export default hono.route((x) =>
   x
 
-    .get("/", (c) => {
+    .get("/", MIDDLEWARES.cache30D, (c) => {
       return c.json({
         endpoints: {
           "/~/:name{.+$}": HOST.API("npm/~/:name{.+$}"),
@@ -24,7 +24,7 @@ export default hono.route((x) =>
       });
     })
 
-    .get("/~/:name{.+$}", async (c) => {
+    .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
 
       if (parsedParam.success) {
@@ -44,7 +44,7 @@ export default hono.route((x) =>
       throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
-    .get("/dpw/:name{.+$}", async (c) => {
+    .get("/dpw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
 
       if (parsedParam.success) {
@@ -64,7 +64,7 @@ export default hono.route((x) =>
       throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
-    .get("/dpm/:name{.+$}", async (c) => {
+    .get("/dpm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
 
       if (parsedParam.success) {
@@ -84,7 +84,7 @@ export default hono.route((x) =>
       throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
-    .get("/drw/:name{.+$}", async (c) => {
+    .get("/drw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
 
       if (parsedParam.success) {
@@ -104,7 +104,7 @@ export default hono.route((x) =>
       throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
-    .get("/drm/:name{.+$}", async (c) => {
+    .get("/drm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
       const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
 
       if (parsedParam.success) {

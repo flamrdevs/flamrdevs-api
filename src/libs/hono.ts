@@ -7,7 +7,7 @@ const create = () => new Hono();
 
 type Plugin = (context: Context, next: Next) => Promise<void | Response>;
 
-const plugin = <T extends Record<PropertyKey, never> = Record<PropertyKey, never>>(fn: (options?: T) => Plugin) => fn;
+const plugin = <T extends Record<PropertyKey, string | number | boolean>>(fn: (options?: T) => Plugin) => fn;
 
 const route = (fn: (hono: Hono) => Hono) => {
   return fn(new Hono());
