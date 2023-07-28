@@ -3,7 +3,13 @@ export type { Context } from "hono/mod.ts";
 import { Context, Hono } from "hono/mod.ts";
 import type { Next } from "hono/mod.ts";
 
-const create = () => new Hono();
+import { logger } from "~/libs/@hono/middleware.ts";
+
+const create = () => {
+  const hono = new Hono();
+  if (Deno.env.get("MODE") !== "production") hono.use("*", logger());
+  return hono;
+};
 
 type Plugin = (context: Context, next: Next) => Promise<void | Response>;
 

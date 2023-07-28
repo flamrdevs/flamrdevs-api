@@ -1,5 +1,5 @@
+import { cors, compress } from "~/libs/@hono/middleware.ts";
 import { dayjs, hono, nanoid } from "~/libs/exports.ts";
-import { cors, compress } from "~/libs/@hono/middlewares.ts";
 
 import routeTilde from "~/routes/~.ts";
 import routeContent from "~/routes/content.ts";
