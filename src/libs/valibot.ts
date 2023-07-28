@@ -1,4 +1,4 @@
-import type { ValiError } from "valibot";
+import type { ValiError } from "valibot/mod.ts";
 
 const firstErrorMessage = <
   T extends {
@@ -25,6 +25,6 @@ export {
   regex,
   useDefault,
   safeParseAsync,
-} from "valibot";
-export type { BaseSchema, BaseSchemaAsync, Output } from "valibot";
+} from "valibot/mod.ts";
+export type { BaseSchema, BaseSchemaAsync, Output } from "valibot/mod.ts";
 export { firstErrorMessage };
