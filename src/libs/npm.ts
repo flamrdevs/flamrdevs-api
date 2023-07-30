@@ -1,37 +1,40 @@
-import { fetch, valibot } from "~/libs/exports.ts";
+import { fetch, zod } from "~/libs/exports.ts";
 
-const PackagenameSchema = valibot.string([
-  valibot.regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/, "Invalid NPM package name"),
-  valibot.regex(/^(?!.*-$)[\s\S]*$/, "Package name cannot end with a hyphen"),
-]);
+const PackagenameSchema = zod.z
+  .string({
+    required_error: "Package name is required",
+    invalid_type_error: "Package name must be a string",
+  })
+  .regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/, { message: "Invalid NPM package name" })
+  .regex(/^(?!.*-$)[\s\S]*$/, { message: "Package name cannot end with a hyphen" });
 
-type Package = valibot.Output<typeof PackageSchema>;
+type Package = zod.z.infer<typeof PackageSchema>;
 
-const PackageSchema = valibot.object({
-  name: valibot.string(),
-  version: valibot.string(),
-  description: valibot.optional(valibot.string()),
+const PackageSchema = zod.z.object({
+  name: zod.z.string(),
+  version: zod.z.string(),
+  description: zod.z.optional(zod.z.string()),
 });
 
-type DownloadsPoint = valibot.Output<typeof DownloadsPointSchema>;
+type DownloadsPoint = zod.z.infer<typeof DownloadsPointSchema>;
 
-const DownloadsPointSchema = valibot.object({
-  package: valibot.string(),
-  start: valibot.string(),
-  end: valibot.string(),
-  downloads: valibot.number(),
+const DownloadsPointSchema = zod.z.object({
+  package: zod.z.string(),
+  start: zod.z.string(),
+  end: zod.z.string(),
+  downloads: zod.z.number(),
 });
 
-type DownloadsRange = valibot.Output<typeof DownloadsRangeSchema>;
+type DownloadsRange = zod.z.infer<typeof DownloadsRangeSchema>;
 
-const DownloadsRangeSchema = valibot.object({
-  package: valibot.string(),
-  start: valibot.string(),
-  end: valibot.string(),
-  downloads: valibot.array(
-    valibot.object({
-      day: valibot.string(),
-      downloads: valibot.number(),
+const DownloadsRangeSchema = zod.z.object({
+  package: zod.z.string(),
+  start: zod.z.string(),
+  end: zod.z.string(),
+  downloads: zod.z.array(
+    zod.z.object({
+      day: zod.z.string(),
+      downloads: zod.z.number(),
     })
   ),
 });

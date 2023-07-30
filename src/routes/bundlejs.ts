@@ -1,8 +1,8 @@
-import { bundlejs, cache, hono, npm, valibot } from "~/libs/exports.ts";
+import { bundlejs, cache, hono, npm, zod } from "~/libs/exports.ts";
 
 import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
-const BundleParamSchema = valibot.object({ name: npm.PackagenameSchema });
+const BundleParamSchema = zod.z.object({ name: npm.PackagenameSchema });
 const BundleCache = cache.create<bundlejs.Bundle>();
 
 export default hono.route((x) =>
@@ -17,7 +17,7 @@ export default hono.route((x) =>
     })
 
     .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(BundleParamSchema, c.req.param());
+      const parsedParam = await BundleParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { name } = parsedParam.data;
@@ -26,13 +26,13 @@ export default hono.route((x) =>
         const cached = BundleCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(bundlejs.BundleSchema, await bundlejs.getBundle(name));
+        const parsedData = await bundlejs.BundleSchema.safeParseAsync(await bundlejs.getBundle(name));
 
         if (parsedData.success) return c.json(BundleCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 );

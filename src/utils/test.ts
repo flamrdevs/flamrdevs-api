@@ -1,6 +1,6 @@
 import { assertEquals } from "std/assert/assert_equals.ts";
 
-import { valibot } from "~/libs/exports.ts";
+import { zod } from "~/libs/exports.ts";
 
 const create = (res: Response, status: number) => {
   assertEquals(res.status, status);
@@ -18,8 +18,8 @@ const create = (res: Response, status: number) => {
       assertEquals(await res.json(), value);
       return this;
     },
-    valibot(this, schema: valibot.BaseSchema | valibot.BaseSchemaAsync) {
-      const success = async (value?: unknown) => assertEquals((await valibot.safeParseAsync(schema, value)).success, true);
+    zod<S extends zod.z.Schema>(this, schema: S) {
+      const success = async (value?: unknown) => assertEquals((await schema.safeParseAsync(value)).success, true);
       return {
         headers: async () => {
           await success(Object.fromEntries(res.headers));

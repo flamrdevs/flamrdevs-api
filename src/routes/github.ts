@@ -1,14 +1,14 @@
-import { cache, github, hono, valibot } from "~/libs/exports.ts";
+import { cache, github, hono, zod } from "~/libs/exports.ts";
 
 import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
-const UserParamSchema = valibot.object({ username: github.UsernameSchema });
+const UserParamSchema = zod.z.object({ username: github.UsernameSchema });
 const UserCache = cache.create<github.User>();
 
-const OrgParamSchema = valibot.object({ org: github.ReponameSchema });
+const OrgParamSchema = zod.z.object({ org: github.ReponameSchema });
 const OrgCache = cache.create<github.Org>();
 
-const RepoParamSchema = valibot.object({ owner: github.UsernameSchema, repo: github.ReponameSchema });
+const RepoParamSchema = zod.z.object({ owner: github.UsernameSchema, repo: github.ReponameSchema });
 const RepoCache = cache.create<github.Repo>();
 
 export default hono.route((x) =>
@@ -25,7 +25,7 @@ export default hono.route((x) =>
     })
 
     .get("/users/:username", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(UserParamSchema, c.req.param());
+      const parsedParam = await UserParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { username } = parsedParam.data;
@@ -34,18 +34,18 @@ export default hono.route((x) =>
         const cached = UserCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(github.UserSchema, await github.getUser(username));
+        const parsedData = await github.UserSchema.safeParseAsync(await github.getUser(username));
 
         if (parsedData.success) return c.json(UserCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/orgs/:org", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(OrgParamSchema, c.req.param());
+      const parsedParam = await OrgParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { org } = parsedParam.data;
@@ -54,18 +54,18 @@ export default hono.route((x) =>
         const cached = OrgCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(github.OrgSchema, await github.getOrg(org));
+        const parsedData = await github.OrgSchema.safeParseAsync(await github.getOrg(org));
 
         if (parsedData.success) return c.json(OrgCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(RepoParamSchema, c.req.param());
+      const parsedParam = await RepoParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { owner, repo } = parsedParam.data;
@@ -74,13 +74,13 @@ export default hono.route((x) =>
         const cached = RepoCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(github.RepoSchema, await github.getRepo(owner, repo));
+        const parsedData = await github.RepoSchema.safeParseAsync(await github.getRepo(owner, repo));
 
         if (parsedData.success) return c.json(RepoCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 );

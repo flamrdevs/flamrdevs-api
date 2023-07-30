@@ -1,16 +1,16 @@
-import { fetch, valibot } from "~/libs/exports.ts";
+import { fetch, zod } from "~/libs/exports.ts";
 
-type Bundle = valibot.Output<typeof BundleSchema>;
+type Bundle = zod.z.infer<typeof BundleSchema>;
 
-const BundleSchema = valibot.object({
-  version: valibot.string(),
-  size: valibot.object({
-    type: valibot.string(),
-    rawUncompressedSize: valibot.number(),
-    uncompressedSize: valibot.string(),
-    rawCompressedSize: valibot.number(),
-    compressedSize: valibot.string(),
-    size: valibot.string(),
+const BundleSchema = zod.z.object({
+  version: zod.z.string(),
+  size: zod.z.object({
+    type: zod.z.string(),
+    rawUncompressedSize: zod.z.number(),
+    uncompressedSize: zod.z.string(),
+    rawCompressedSize: zod.z.number(),
+    compressedSize: zod.z.string(),
+    size: zod.z.string(),
   }),
 });
 

@@ -1,6 +1,6 @@
 Deno.env.set("MODE", "development");
 
-import { valibot } from "~/libs/exports.ts";
+import { zod } from "~/libs/exports.ts";
 
 import { HOST } from "~/utils/exports.ts";
 import { isOk, isNotFound, isApplicationJSON } from "~/utils/test.ts";
@@ -111,18 +111,18 @@ Deno.test("[route] GET /", async () => {
   const res = isOk(await fetch.get("/")).content("application/json; charset=UTF-8");
 
   await res
-    .valibot(
-      valibot.object({
-        "x-me": valibot.string(),
-        "x-id": valibot.string(),
+    .zod(
+      zod.z.object({
+        "x-me": zod.z.string(),
+        "x-id": zod.z.string(),
       })
     )
     .headers();
   await res
-    .valibot(
-      valibot.object({
-        name: valibot.string(),
-        build: valibot.string(),
+    .zod(
+      zod.z.object({
+        name: zod.z.string(),
+        build: zod.z.string(),
       })
     )
     .json();

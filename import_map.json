@@ -6,6 +6,6 @@
     "dayjs": "https://esm.sh/dayjs@1.11.9",
     "nanoid": "https://esm.sh/nanoid@4.0.2",
     "hono/": "https://deno.land/x/hono@v3.3.4/",
-    "valibot/": "https://deno.land/x/valibot@v0.5.0/"
+    "zod/": "https://deno.land/x/zod@v3.21.4/"
   }
 }

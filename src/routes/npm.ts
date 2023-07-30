@@ -1,8 +1,8 @@
-import { cache, hono, npm, valibot } from "~/libs/exports.ts";
+import { cache, hono, npm, zod } from "~/libs/exports.ts";
 
 import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
-const PackageParamSchema = valibot.object({ name: npm.PackagenameSchema });
+const PackageParamSchema = zod.z.object({ name: npm.PackagenameSchema });
 const PackageCache = cache.create<npm.Package>();
 const DownloadsPointWeekCache = cache.create<npm.DownloadsPoint>();
 const DownloadsPointMonthCache = cache.create<npm.DownloadsPoint>();
@@ -25,7 +25,7 @@ export default hono.route((x) =>
     })
 
     .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
+      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { name } = parsedParam.data;
@@ -34,18 +34,18 @@ export default hono.route((x) =>
         const cached = PackageCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(npm.PackageSchema, await npm.getPackage(name));
+        const parsedData = await npm.PackageSchema.safeParseAsync(await npm.getPackage(name));
 
         if (parsedData.success) return c.json(PackageCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/dpw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
+      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { name } = parsedParam.data;
@@ -54,18 +54,18 @@ export default hono.route((x) =>
         const cached = DownloadsPointWeekCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(npm.DownloadsPointSchema, await npm.getWeekDownloadsPoint(name));
+        const parsedData = await npm.DownloadsPointSchema.safeParseAsync(await npm.getWeekDownloadsPoint(name));
 
         if (parsedData.success) return c.json(DownloadsPointWeekCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/dpm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
+      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { name } = parsedParam.data;
@@ -74,18 +74,18 @@ export default hono.route((x) =>
         const cached = DownloadsPointMonthCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(npm.DownloadsPointSchema, await npm.getMonthDownloadsPoint(name));
+        const parsedData = await npm.DownloadsPointSchema.safeParseAsync(await npm.getMonthDownloadsPoint(name));
 
         if (parsedData.success) return c.json(DownloadsPointMonthCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/drw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
+      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { name } = parsedParam.data;
@@ -94,18 +94,18 @@ export default hono.route((x) =>
         const cached = DownloadsRangeWeekCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(npm.DownloadsRangeSchema, await npm.getWeekDownloadsRange(name));
+        const parsedData = await npm.DownloadsRangeSchema.safeParseAsync(await npm.getWeekDownloadsRange(name));
 
         if (parsedData.success) return c.json(DownloadsRangeWeekCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 
     .get("/drm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await valibot.safeParseAsync(PackageParamSchema, c.req.param());
+      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
 
       if (parsedParam.success) {
         const { name } = parsedParam.data;
@@ -114,13 +114,13 @@ export default hono.route((x) =>
         const cached = DownloadsRangeMonthCache.get(key);
         if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await valibot.safeParseAsync(npm.DownloadsRangeSchema, await npm.getMonthDownloadsRange(name));
+        const parsedData = await npm.DownloadsRangeSchema.safeParseAsync(await npm.getMonthDownloadsRange(name));
 
         if (parsedData.success) return c.json(DownloadsRangeMonthCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
 
-        throw new hono.APIError(400, valibot.firstErrorMessage(parsedData, "Invalid data"));
+        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
       }
 
-      throw new hono.APIError(400, valibot.firstErrorMessage(parsedParam, "Invalid param"));
+      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
     })
 );

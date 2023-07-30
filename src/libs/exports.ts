@@ -1,4 +1,4 @@
-export * as valibot from "~/libs/valibot.ts";
+export * as zod from "~/libs/zod.ts";
 export * as bundlejs from "~/libs/bundlejs.ts";
 export * as cache from "~/libs/cache.ts";
 export * as content from "~/libs/content.ts";

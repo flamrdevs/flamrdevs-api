@@ -1,46 +1,52 @@
-import { fetch, valibot } from "~/libs/exports.ts";
+import { fetch, zod } from "~/libs/exports.ts";
 
-const UsernameSchema = valibot.string([
-  valibot.minLength(1, "Username must be at least 1 character long"),
-  valibot.maxLength(39, "Username can be up to 39 characters long"),
-  valibot.regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/, "Invalid GitHub username"),
-  valibot.regex(/^(?!.*-$)[\s\S]*$/, "Username cannot end with a hyphen"),
-]);
+const UsernameSchema = zod.z
+  .string({
+    required_error: "Username is required",
+    invalid_type_error: "Username must be a string",
+  })
+  .min(1, { message: "Username must be at least 1 character long" })
+  .max(39, { message: "Username can be up to 39 characters long" })
+  .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/, { message: "Invalid GitHub username" })
+  .regex(/^(?!.*-$)[\s\S]*$/, { message: "Username cannot end with a hyphen" });
 
-const ReponameSchema = valibot.string([
-  valibot.minLength(1, "Repository name must be at least 1 character long"),
-  valibot.maxLength(100, "Repository name can be up to 100 characters long"),
-  valibot.regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,99}$/, "Invalid repository name"),
-  valibot.regex(/^(?!.*-$)[\s\S]*$/, "Repository name cannot end with a hyphen"),
-]);
+const ReponameSchema = zod.z
+  .string({
+    required_error: "Repository name is required",
+    invalid_type_error: "Repository name must be a string",
+  })
+  .min(1, { message: "Repository name must be at least 1 character long" })
+  .max(100, { message: "Repository name can be up to 100 characters long" })
+  .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,99}$/, { message: "Invalid repository name" })
+  .regex(/^(?!.*-$)[\s\S]*$/, { message: "Repository name cannot end with a hyphen" });
 
-type User = valibot.Output<typeof UserSchema>;
+type User = zod.z.infer<typeof UserSchema>;
 
-const UserSchema = valibot.object({
-  id: valibot.number(),
-  name: valibot.string(),
-  bio: valibot.optional(valibot.nullable(valibot.string())),
-  followers: valibot.number(),
-  following: valibot.number(),
+const UserSchema = zod.z.object({
+  id: zod.z.number(),
+  name: zod.z.string(),
+  bio: zod.z.optional(zod.z.nullable(zod.z.string())),
+  followers: zod.z.number(),
+  following: zod.z.number(),
 });
 
-type Org = valibot.Output<typeof OrgSchema>;
+type Org = zod.z.infer<typeof OrgSchema>;
 
-const OrgSchema = valibot.object({
-  id: valibot.number(),
-  name: valibot.string(),
-  description: valibot.optional(valibot.nullable(valibot.string())),
-  followers: valibot.number(),
-  following: valibot.number(),
+const OrgSchema = zod.z.object({
+  id: zod.z.number(),
+  name: zod.z.string(),
+  description: zod.z.optional(zod.z.nullable(zod.z.string())),
+  followers: zod.z.number(),
+  following: zod.z.number(),
 });
 
-type Repo = valibot.Output<typeof RepoSchema>;
+type Repo = zod.z.infer<typeof RepoSchema>;
 
-const RepoSchema = valibot.object({
-  id: valibot.number(),
-  name: valibot.string(),
-  description: valibot.optional(valibot.nullable(valibot.string())),
-  stargazers_count: valibot.number(),
+const RepoSchema = zod.z.object({
+  id: zod.z.number(),
+  name: zod.z.string(),
+  description: zod.z.optional(zod.z.nullable(zod.z.string())),
+  stargazers_count: zod.z.number(),
 });
 
 const getUser = (username: string) => fetch.get<User>(`https://api.github.com/users/${username}`);
