@@ -1,10 +1,7 @@
 import { fetch, zod } from "~/libs/exports.ts";
 
 const PackagenameSchema = zod.z
-  .string({
-    required_error: "Package name is required",
-    invalid_type_error: "Package name must be a string",
-  })
+  .string({ required_error: "Package name is required", invalid_type_error: "Package name must be a string" })
   .regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/, { message: "Invalid NPM package name" })
   .regex(/^(?!.*-$)[\s\S]*$/, { message: "Package name cannot end with a hyphen" });
 

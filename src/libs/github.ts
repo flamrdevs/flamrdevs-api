@@ -1,20 +1,14 @@
 import { fetch, zod } from "~/libs/exports.ts";
 
 const UsernameSchema = zod.z
-  .string({
-    required_error: "Username is required",
-    invalid_type_error: "Username must be a string",
-  })
+  .string({ required_error: "Username is required", invalid_type_error: "Username must be a string" })
   .min(1, { message: "Username must be at least 1 character long" })
   .max(39, { message: "Username can be up to 39 characters long" })
   .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/, { message: "Invalid GitHub username" })
   .regex(/^(?!.*-$)[\s\S]*$/, { message: "Username cannot end with a hyphen" });
 
 const ReponameSchema = zod.z
-  .string({
-    required_error: "Repository name is required",
-    invalid_type_error: "Repository name must be a string",
-  })
+  .string({ required_error: "Repository name is required", invalid_type_error: "Repository name must be a string" })
   .min(1, { message: "Repository name must be at least 1 character long" })
   .max(100, { message: "Repository name can be up to 100 characters long" })
   .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,99}$/, { message: "Invalid repository name" })
