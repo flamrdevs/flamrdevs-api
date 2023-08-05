@@ -1,15 +1,12 @@
-import { cache, github, hono, zod } from "~/libs/exports.ts";
+import { github, hono, zod } from "~/libs/exports.ts";
 
 import { HEADERS, HOST, MIDDLEWARES } from "~/utils/exports.ts";
 
 const UserParamSchema = zod.z.object({ username: github.UsernameSchema });
-const UserCache = cache.create<github.User>();
 
 const OrgParamSchema = zod.z.object({ org: github.ReponameSchema });
-const OrgCache = cache.create<github.Org>();
 
 const RepoParamSchema = zod.z.object({ owner: github.UsernameSchema, repo: github.ReponameSchema });
-const RepoCache = cache.create<github.Repo>();
 
 export default hono.route((x) =>
   x
@@ -27,42 +24,24 @@ export default hono.route((x) =>
     .get("/users/:username", MIDDLEWARES.cache1D, async (c) => {
       const param = await UserParamSchema.parseAsync(c.req.param());
 
-      const { username } = param;
-      const key = username;
+      const [cache, data] = await github.getUser(param.username);
 
-      const cached = UserCache.get(key);
-      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
-
-      const data = await github.UserSchema.parseAsync(await github.getUser(username));
-
-      return c.json(UserCache.set(key, data), 200, HEADERS.NOCACHE);
+      return c.json(await github.UserSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
     .get("/orgs/:org", MIDDLEWARES.cache1D, async (c) => {
       const param = await OrgParamSchema.parseAsync(c.req.param());
 
-      const { org } = param;
-      const key = org;
+      const [cache, data] = await github.getOrg(param.org);
 
-      const cached = OrgCache.get(key);
-      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
-
-      const data = await github.OrgSchema.parseAsync(await github.getOrg(org));
-
-      return c.json(OrgCache.set(key, data), 200, HEADERS.NOCACHE);
+      return c.json(await github.OrgSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
     .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (c) => {
       const param = await RepoParamSchema.parseAsync(c.req.param());
 
-      const { owner, repo } = param;
-      const key = `${owner}/${repo}`;
+      const [cache, data] = await github.getRepo(param.owner, param.repo);
 
-      const cached = RepoCache.get(key);
-      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
-
-      const data = await github.RepoSchema.parseAsync(await github.getRepo(owner, repo));
-
-      return c.json(RepoCache.set(key, data), 200, HEADERS.NOCACHE);
+      return c.json(await github.RepoSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 );

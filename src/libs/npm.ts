@@ -1,4 +1,4 @@
-import { fetch, zod } from "~/libs/exports.ts";
+import { cache, fetch, zod } from "~/libs/exports.ts";
 
 const PackagenameSchema = zod.z
   .string({ required_error: "Package name is required", invalid_type_error: "Package name must be a string" })
@@ -36,11 +36,49 @@ const DownloadsRangeSchema = zod.z.object({
   ),
 });
 
-const getPackage = (name: string) => fetch.get<Package>(`https://registry.npmjs.org/${name}/latest`);
-const getWeekDownloadsPoint = (name: string) => fetch.get<DownloadsPoint>(`https://api.npmjs.org/downloads/point/last-week/${name}`);
-const getMonthDownloadsPoint = (name: string) => fetch.get<DownloadsPoint>(`https://api.npmjs.org/downloads/point/last-month/${name}`);
-const getWeekDownloadsRange = (name: string) => fetch.get<DownloadsRange>(`https://api.npmjs.org/downloads/range/last-week/${name}`);
-const getMonthDownloadsRange = (name: string) => fetch.get<DownloadsRange>(`https://api.npmjs.org/downloads/range/last-month/${name}`);
+const PackageCache = cache.create<Package>();
+const DownloadsPointWeekCache = cache.create<DownloadsPoint>();
+const DownloadsPointMonthCache = cache.create<DownloadsPoint>();
+const DownloadsRangeWeekCache = cache.create<DownloadsRange>();
+const DownloadsRangeMonthCache = cache.create<DownloadsRange>();
+
+const getPackage = async (name: string): Promise<[boolean, Package]> => {
+  const cached = PackageCache.get(name);
+  if (cached) return [true, cached];
+  return [false, PackageCache.set(name, await fetch.get<Package>(`https://registry.npmjs.org/${name}/latest`))];
+};
+const getWeekDownloadsPoint = async (name: string): Promise<[boolean, DownloadsPoint]> => {
+  const cached = DownloadsPointWeekCache.get(name);
+  if (cached) return [true, cached];
+  return [
+    false,
+    DownloadsPointWeekCache.set(name, await fetch.get<DownloadsPoint>(`https://api.npmjs.org/downloads/point/last-week/${name}`)),
+  ];
+};
+const getMonthDownloadsPoint = async (name: string): Promise<[boolean, DownloadsPoint]> => {
+  const cached = DownloadsPointMonthCache.get(name);
+  if (cached) return [true, cached];
+  return [
+    false,
+    DownloadsPointMonthCache.set(name, await fetch.get<DownloadsPoint>(`https://api.npmjs.org/downloads/point/last-month/${name}`)),
+  ];
+};
+const getWeekDownloadsRange = async (name: string): Promise<[boolean, DownloadsRange]> => {
+  const cached = DownloadsRangeWeekCache.get(name);
+  if (cached) return [true, cached];
+  return [
+    false,
+    DownloadsRangeWeekCache.set(name, await fetch.get<DownloadsRange>(`https://api.npmjs.org/downloads/range/last-week/${name}`)),
+  ];
+};
+const getMonthDownloadsRange = async (name: string): Promise<[boolean, DownloadsRange]> => {
+  const cached = DownloadsRangeMonthCache.get(name);
+  if (cached) return [true, cached];
+  return [
+    false,
+    DownloadsRangeMonthCache.set(name, await fetch.get<DownloadsRange>(`https://api.npmjs.org/downloads/range/last-month/${name}`)),
+  ];
+};
 
 export type { Package, DownloadsPoint, DownloadsRange };
 export { PackagenameSchema };

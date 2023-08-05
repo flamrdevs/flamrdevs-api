@@ -1,4 +1,4 @@
-import { fetch, zod } from "~/libs/exports.ts";
+import { cache, fetch, zod } from "~/libs/exports.ts";
 
 type Bundle = zod.z.infer<typeof BundleSchema>;
 
@@ -14,7 +14,13 @@ const BundleSchema = zod.z.object({
   }),
 });
 
-const getBundle = (name: string) => fetch.get<Bundle>(`https://deno.bundlejs.com/?q=${name}`);
+const BundleCache = cache.create<Bundle>();
+
+const getBundle = async (name: string): Promise<[boolean, Bundle]> => {
+  const cached = BundleCache.get(name);
+  if (cached) return [true, cached];
+  return [false, BundleCache.set(name, await fetch.get<Bundle>(`https://deno.bundlejs.com/?q=${name}`))];
+};
 
 export type { Bundle };
 export { BundleSchema };

@@ -1,4 +1,4 @@
-import { fetch, zod } from "~/libs/exports.ts";
+import { cache, fetch, zod } from "~/libs/exports.ts";
 
 const UsernameSchema = zod.z
   .string({ required_error: "Username is required", invalid_type_error: "Username must be a string" })
@@ -43,9 +43,26 @@ const RepoSchema = zod.z.object({
   stargazers_count: zod.z.number(),
 });
 
-const getUser = (username: string) => fetch.get<User>(`https://api.github.com/users/${username}`);
-const getOrg = (org: string) => fetch.get<Org>(`https://api.github.com/orgs/${org}`);
-const getRepo = (owner: string, repo: string) => fetch.get<Repo>(`https://api.github.com/repos/${owner}/${repo}`);
+const UserCache = cache.create<User>();
+const OrgCache = cache.create<Org>();
+const RepoCache = cache.create<Repo>();
+
+const getUser = async (username: string): Promise<[boolean, User]> => {
+  const cached = UserCache.get(username);
+  if (cached) return [true, cached];
+  return [false, UserCache.set(username, await fetch.get<User>(`https://api.github.com/users/${username}`))];
+};
+const getOrg = async (org: string): Promise<[boolean, Org]> => {
+  const cached = OrgCache.get(org);
+  if (cached) return [true, cached];
+  return [false, OrgCache.set(org, await fetch.get<Org>(`https://api.github.com/orgs/${org}`))];
+};
+const getRepo = async (owner: string, repo: string): Promise<[boolean, Repo]> => {
+  const key = `${owner}/${repo}`;
+  const cached = RepoCache.get(key);
+  if (cached) return [true, cached];
+  return [false, RepoCache.set(key, await fetch.get<Repo>(`https://api.github.com/repos/${key}`))];
+};
 
 export type { User, Org, Repo };
 export { UsernameSchema, ReponameSchema };
