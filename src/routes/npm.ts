@@ -25,102 +25,72 @@ export default hono.route((x) =>
     })
 
     .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
+      const param = await PackageParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { name } = parsedParam.data;
-        const key = name;
+      const { name } = param;
+      const key = name;
 
-        const cached = PackageCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = PackageCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await npm.PackageSchema.safeParseAsync(await npm.getPackage(name));
+      const data = await npm.PackageSchema.parseAsync(await npm.getPackage(name));
 
-        if (parsedData.success) return c.json(PackageCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(PackageCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 
     .get("/dpw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
+      const param = await PackageParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { name } = parsedParam.data;
-        const key = name;
+      const { name } = param;
+      const key = name;
 
-        const cached = DownloadsPointWeekCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = DownloadsPointWeekCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await npm.DownloadsPointSchema.safeParseAsync(await npm.getWeekDownloadsPoint(name));
+      const data = await npm.DownloadsPointSchema.parseAsync(await npm.getWeekDownloadsPoint(name));
 
-        if (parsedData.success) return c.json(DownloadsPointWeekCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(DownloadsPointWeekCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 
     .get("/dpm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
+      const param = await PackageParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { name } = parsedParam.data;
-        const key = name;
+      const { name } = param;
+      const key = name;
 
-        const cached = DownloadsPointMonthCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = DownloadsPointMonthCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await npm.DownloadsPointSchema.safeParseAsync(await npm.getMonthDownloadsPoint(name));
+      const data = await npm.DownloadsPointSchema.parseAsync(await npm.getMonthDownloadsPoint(name));
 
-        if (parsedData.success) return c.json(DownloadsPointMonthCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(DownloadsPointMonthCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 
     .get("/drw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
+      const param = await PackageParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { name } = parsedParam.data;
-        const key = name;
+      const { name } = param;
+      const key = name;
 
-        const cached = DownloadsRangeWeekCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = DownloadsRangeWeekCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await npm.DownloadsRangeSchema.safeParseAsync(await npm.getWeekDownloadsRange(name));
+      const data = await npm.DownloadsRangeSchema.parseAsync(await npm.getWeekDownloadsRange(name));
 
-        if (parsedData.success) return c.json(DownloadsRangeWeekCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(DownloadsRangeWeekCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 
     .get("/drm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await PackageParamSchema.safeParseAsync(c.req.param());
+      const param = await PackageParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { name } = parsedParam.data;
-        const key = name;
+      const { name } = param;
+      const key = name;
 
-        const cached = DownloadsRangeMonthCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = DownloadsRangeMonthCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await npm.DownloadsRangeSchema.safeParseAsync(await npm.getMonthDownloadsRange(name));
+      const data = await npm.DownloadsRangeSchema.parseAsync(await npm.getMonthDownloadsRange(name));
 
-        if (parsedData.success) return c.json(DownloadsRangeMonthCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(DownloadsRangeMonthCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 );

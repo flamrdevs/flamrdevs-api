@@ -19,7 +19,15 @@ const create = (res: Response, status: number) => {
       return this;
     },
     zod<S extends zod.z.Schema>(this, schema: S) {
-      const success = async (value?: unknown) => assertEquals((await schema.safeParseAsync(value)).success, true);
+      const success = async (value?: unknown) => {
+        let is = true;
+        try {
+          await schema.parseAsync(value);
+        } catch {
+          is = false;
+        }
+        assertEquals(is, true);
+      };
       return {
         headers: async () => {
           await success(Object.fromEntries(res.headers));

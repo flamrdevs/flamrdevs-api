@@ -1,13 +1,7 @@
 import { z, ZodError } from "zod/mod.ts";
 
-const firstErrorMessage = <
-  T extends {
-    success: false;
-    error: ZodError;
-  }
->(
-  safeParseError: T,
-  fallbackMessage: string
-) => safeParseError.error.issues?.at(0)?.message ?? fallbackMessage;
+const isError = (value: unknown): value is ZodError => value instanceof ZodError;
 
-export { z, firstErrorMessage };
+const firstErrorMessage = (error: ZodError) => error.issues.at(0)?.message ?? "Bad request";
+
+export { z, isError, firstErrorMessage };

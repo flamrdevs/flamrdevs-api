@@ -1,5 +1,5 @@
 import { cors, compress } from "~/libs/@hono/middleware.ts";
-import { dayjs, hono, nanoid } from "~/libs/exports.ts";
+import { dayjs, hono, nanoid, zod } from "~/libs/exports.ts";
 
 import routeTilde from "~/routes/~.ts";
 import routeContent from "~/routes/content.ts";
@@ -30,9 +30,9 @@ const app = hono
     let status = 500;
     let message = "Internal server error";
 
-    if (hono.APIError.is(error)) {
-      status = error.status;
-      message = error.message;
+    if (zod.isError(error)) {
+      status = 400;
+      message = zod.firstErrorMessage(error);
     } else if (error instanceof Error) {
       message = error.message;
     }

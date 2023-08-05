@@ -25,62 +25,44 @@ export default hono.route((x) =>
     })
 
     .get("/users/:username", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await UserParamSchema.safeParseAsync(c.req.param());
+      const param = await UserParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { username } = parsedParam.data;
-        const key = username;
+      const { username } = param;
+      const key = username;
 
-        const cached = UserCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = UserCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await github.UserSchema.safeParseAsync(await github.getUser(username));
+      const data = await github.UserSchema.parseAsync(await github.getUser(username));
 
-        if (parsedData.success) return c.json(UserCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(UserCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 
     .get("/orgs/:org", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await OrgParamSchema.safeParseAsync(c.req.param());
+      const param = await OrgParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { org } = parsedParam.data;
-        const key = org;
+      const { org } = param;
+      const key = org;
 
-        const cached = OrgCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = OrgCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await github.OrgSchema.safeParseAsync(await github.getOrg(org));
+      const data = await github.OrgSchema.parseAsync(await github.getOrg(org));
 
-        if (parsedData.success) return c.json(OrgCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(OrgCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 
     .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await RepoParamSchema.safeParseAsync(c.req.param());
+      const param = await RepoParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { owner, repo } = parsedParam.data;
-        const key = `${owner}/${repo}`;
+      const { owner, repo } = param;
+      const key = `${owner}/${repo}`;
 
-        const cached = RepoCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = RepoCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await github.RepoSchema.safeParseAsync(await github.getRepo(owner, repo));
+      const data = await github.RepoSchema.parseAsync(await github.getRepo(owner, repo));
 
-        if (parsedData.success) return c.json(RepoCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(RepoCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 );

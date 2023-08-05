@@ -17,22 +17,16 @@ export default hono.route((x) =>
     })
 
     .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const parsedParam = await BundleParamSchema.safeParseAsync(c.req.param());
+      const param = await BundleParamSchema.parseAsync(c.req.param());
 
-      if (parsedParam.success) {
-        const { name } = parsedParam.data;
-        const key = name;
+      const { name } = param;
+      const key = name;
 
-        const cached = BundleCache.get(key);
-        if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
+      const cached = BundleCache.get(key);
+      if (typeof cached !== "undefined") return c.json(cached, 200, HEADERS.CACHE);
 
-        const parsedData = await bundlejs.BundleSchema.safeParseAsync(await bundlejs.getBundle(name));
+      const data = await bundlejs.BundleSchema.parseAsync(await bundlejs.getBundle(name));
 
-        if (parsedData.success) return c.json(BundleCache.set(key, parsedData.data), 200, HEADERS.NOCACHE);
-
-        throw new hono.APIError(400, zod.firstErrorMessage(parsedData, "Invalid data"));
-      }
-
-      throw new hono.APIError(400, zod.firstErrorMessage(parsedParam, "Invalid param"));
+      return c.json(BundleCache.set(key, data), 200, HEADERS.NOCACHE);
     })
 );
