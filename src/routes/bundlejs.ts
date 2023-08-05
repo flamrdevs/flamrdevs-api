@@ -20,6 +20,6 @@ export default hono.route((x) =>
 
       const [cache, data] = await bundlejs.getBundle(param.name);
 
-      return ctx.json(await bundlejs.BundleSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await bundlejs.BundleSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 );

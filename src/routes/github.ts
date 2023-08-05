@@ -26,7 +26,7 @@ export default hono.route((x) =>
 
       const [cache, data] = await github.getUser(param.username);
 
-      return ctx.json(await github.UserSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await github.UserSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 
     .get("/orgs/:org", MIDDLEWARES.cache1D, async (ctx) => {
@@ -34,7 +34,7 @@ export default hono.route((x) =>
 
       const [cache, data] = await github.getOrg(param.org);
 
-      return ctx.json(await github.OrgSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await github.OrgSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 
     .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (ctx) => {
@@ -42,6 +42,6 @@ export default hono.route((x) =>
 
       const [cache, data] = await github.getRepo(param.owner, param.repo);
 
-      return ctx.json(await github.RepoSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await github.RepoSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 );

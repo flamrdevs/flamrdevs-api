@@ -24,7 +24,7 @@ export default hono.route((x) =>
 
       const [cache, data] = await npm.getPackage(param.name);
 
-      return ctx.json(await npm.PackageSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.PackageSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 
     .get("/dpw/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
@@ -32,7 +32,7 @@ export default hono.route((x) =>
 
       const [cache, data] = await npm.getWeekDownloadsPoint(param.name);
 
-      return ctx.json(await npm.DownloadsPointSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsPointSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 
     .get("/dpm/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
@@ -40,7 +40,7 @@ export default hono.route((x) =>
 
       const [cache, data] = await npm.getMonthDownloadsPoint(param.name);
 
-      return ctx.json(await npm.DownloadsPointSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsPointSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 
     .get("/drw/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
@@ -48,7 +48,7 @@ export default hono.route((x) =>
 
       const [cache, data] = await npm.getWeekDownloadsRange(param.name);
 
-      return ctx.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 
     .get("/drm/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
@@ -56,6 +56,6 @@ export default hono.route((x) =>
 
       const [cache, data] = await npm.getMonthDownloadsRange(param.name);
 
-      return ctx.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, HEADERS.cache(cache));
     })
 );

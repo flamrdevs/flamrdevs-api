@@ -2,4 +2,6 @@ const CACHE = { "x-cache": "true" };
 
 const NOCACHE = { "x-cache": "false" };
 
-export { CACHE, NOCACHE };
+const cache = (is: boolean) => (is ? CACHE : NOCACHE);
+
+export { cache };
