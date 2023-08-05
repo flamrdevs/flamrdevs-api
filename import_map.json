@@ -1,8 +1,8 @@
 {
   "imports": {
     "~/": "./src/",
-    "std/assert/": "https://deno.land/std@0.196.0/assert/",
-    "std/http/": "https://deno.land/std@0.196.0/http/",
+    "std/assert/": "https://deno.land/std@0.197.0/assert/",
+    "std/http/": "https://deno.land/std@0.197.0/http/",
     "dayjs": "https://esm.sh/dayjs@1.11.9",
     "nanoid": "https://esm.sh/nanoid@4.0.2",
     "hono/": "https://deno.land/x/hono@v3.3.4/",
