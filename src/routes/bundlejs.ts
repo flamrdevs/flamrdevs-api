@@ -7,19 +7,19 @@ const BundleParamSchema = zod.z.object({ name: npm.PackagenameSchema });
 export default hono.route((x) =>
   x
 
-    .get("/", MIDDLEWARES.cache30D, (c) => {
-      return c.json({
+    .get("/", MIDDLEWARES.cache30D, (ctx) => {
+      return ctx.json({
         endpoints: {
           "/~/:name{.+$}": HOST.API("bundlejs/~/:name{.+$}"),
         },
       });
     })
 
-    .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const param = await BundleParamSchema.parseAsync(c.req.param());
+    .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await BundleParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await bundlejs.getBundle(param.name);
 
-      return c.json(await bundlejs.BundleSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await bundlejs.BundleSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 );

@@ -7,16 +7,16 @@ export default hono.route((x) =>
 
     .use("*", MIDDLEWARES.cache30D)
 
-    .get("/", (c) => {
-      return c.json({
+    .get("/", (ctx) => {
+      return ctx.json({
         endpoints: {
           "/env": HOST.API("~/env"),
         },
       });
     })
 
-    .get("/env", (c) => {
-      return c.json({
+    .get("/env", (ctx) => {
+      return ctx.json({
         MODE: Deno.env.get("MODE"),
       });
     })

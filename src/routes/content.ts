@@ -7,15 +7,15 @@ export default hono.route((x) =>
 
     .use("*", MIDDLEWARES.cache30D)
 
-    .get("/", (c) => {
-      return c.json({
+    .get("/", (ctx) => {
+      return ctx.json({
         endpoints: {
           "/projects": HOST.API("content/projects"),
         },
       });
     })
 
-    .get("/projects", (c) => {
-      return c.json(content.projects);
+    .get("/projects", (ctx) => {
+      return ctx.json(content.projects);
     })
 );

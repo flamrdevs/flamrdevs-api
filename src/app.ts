@@ -24,9 +24,9 @@ const app = hono
   .route("/npm", routeNPM)
   .route("/bundlejs", routeBundlejs)
 
-  .get("/", MIDDLEWARES.cache30D, (c) => c.json({ name: "api", build }, 200, { "x-me": "flamrdevs", "x-id": id }))
-  .notFound((c) => c.json({ message: "Not found" }, 404))
-  .onError((error: unknown, c) => {
+  .get("/", MIDDLEWARES.cache30D, (ctx) => ctx.json({ name: "api", build }, 200, { "x-me": "flamrdevs", "x-id": id }))
+  .notFound((ctx) => ctx.json({ message: "Not found" }, 404))
+  .onError((error: unknown, ctx) => {
     let status = 500;
     let message = "Internal server error";
 
@@ -37,7 +37,7 @@ const app = hono
       message = error.message;
     }
 
-    return c.json({ message }, status);
+    return ctx.json({ message }, status);
   });
 
 export default app;

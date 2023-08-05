@@ -7,8 +7,8 @@ const PackageParamSchema = zod.z.object({ name: npm.PackagenameSchema });
 export default hono.route((x) =>
   x
 
-    .get("/", MIDDLEWARES.cache30D, (c) => {
-      return c.json({
+    .get("/", MIDDLEWARES.cache30D, (ctx) => {
+      return ctx.json({
         endpoints: {
           "/~/:name{.+$}": HOST.API("npm/~/:name{.+$}"),
           "/dpw/:name{.+$}": HOST.API("npm/dpw/:name{.+$}"),
@@ -19,43 +19,43 @@ export default hono.route((x) =>
       });
     })
 
-    .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const param = await PackageParamSchema.parseAsync(c.req.param());
+    .get("/~/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await PackageParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await npm.getPackage(param.name);
 
-      return c.json(await npm.PackageSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.PackageSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
-    .get("/dpw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const param = await PackageParamSchema.parseAsync(c.req.param());
+    .get("/dpw/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await PackageParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await npm.getWeekDownloadsPoint(param.name);
 
-      return c.json(await npm.DownloadsPointSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsPointSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
-    .get("/dpm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const param = await PackageParamSchema.parseAsync(c.req.param());
+    .get("/dpm/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await PackageParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await npm.getMonthDownloadsPoint(param.name);
 
-      return c.json(await npm.DownloadsPointSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsPointSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
-    .get("/drw/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const param = await PackageParamSchema.parseAsync(c.req.param());
+    .get("/drw/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await PackageParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await npm.getWeekDownloadsRange(param.name);
 
-      return c.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
-    .get("/drm/:name{.+$}", MIDDLEWARES.cache1D, async (c) => {
-      const param = await PackageParamSchema.parseAsync(c.req.param());
+    .get("/drm/:name{.+$}", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await PackageParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await npm.getMonthDownloadsRange(param.name);
 
-      return c.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await npm.DownloadsRangeSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 );

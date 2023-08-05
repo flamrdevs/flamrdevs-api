@@ -11,8 +11,8 @@ const RepoParamSchema = zod.z.object({ owner: github.UsernameSchema, repo: githu
 export default hono.route((x) =>
   x
 
-    .get("/", MIDDLEWARES.cache30D, (c) => {
-      return c.json({
+    .get("/", MIDDLEWARES.cache30D, (ctx) => {
+      return ctx.json({
         endpoints: {
           "/users/:username": HOST.API("github/users/:username"),
           "/orgs/:org": HOST.API("github/orgs/:org"),
@@ -21,27 +21,27 @@ export default hono.route((x) =>
       });
     })
 
-    .get("/users/:username", MIDDLEWARES.cache1D, async (c) => {
-      const param = await UserParamSchema.parseAsync(c.req.param());
+    .get("/users/:username", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await UserParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await github.getUser(param.username);
 
-      return c.json(await github.UserSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await github.UserSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
-    .get("/orgs/:org", MIDDLEWARES.cache1D, async (c) => {
-      const param = await OrgParamSchema.parseAsync(c.req.param());
+    .get("/orgs/:org", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await OrgParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await github.getOrg(param.org);
 
-      return c.json(await github.OrgSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await github.OrgSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 
-    .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (c) => {
-      const param = await RepoParamSchema.parseAsync(c.req.param());
+    .get("/repos/:owner/:repo", MIDDLEWARES.cache1D, async (ctx) => {
+      const param = await RepoParamSchema.parseAsync(ctx.req.param());
 
       const [cache, data] = await github.getRepo(param.owner, param.repo);
 
-      return c.json(await github.RepoSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
+      return ctx.json(await github.RepoSchema.parseAsync(data), 200, cache ? HEADERS.CACHE : HEADERS.NOCACHE);
     })
 );
