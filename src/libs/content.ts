@@ -1,4 +1,5 @@
 type Tag =
+  | "api"
   | "astro"
   | "cloudflare-pages"
   | "deno"
@@ -11,6 +12,7 @@ type Tag =
   | "react"
   | "solid"
   | "svelte"
+  | "svg"
   | "tailwindcss"
   | "turborepo"
   | "vanilla-extract"
@@ -29,78 +31,92 @@ interface IProject {
 const projects: IProject[] = [
   {
     name: "flamrdevs-home",
-    description: "primary apps",
+    description: "main apps",
     slug: "flamrdevs-home",
     repo: "https://github.com/flamrdevs/flamrdevs-home",
     tags: ["astro", "netlify", "solid", "turborepo", "vanilla-extract", "vercel"],
   },
   {
     name: "flamrdevs-static",
-    description: "static app",
+    description: "static assets",
     slug: "flamrdevs-static",
     repo: "https://github.com/flamrdevs/flamrdevs-static",
     tags: ["astro", "cloudflare-pages", "solid", "tailwindcss"],
   },
   {
     name: "flamrdevs-api",
-    description: "api app",
+    description: "main api",
     slug: "flamrdevs-api",
     repo: "https://github.com/flamrdevs/flamrdevs-api",
-    tags: ["deno", "hono"],
+    tags: ["api", "deno", "hono"],
   },
   {
     name: "flamrdevs-image",
-    description: "image app",
+    description: "image generation",
     slug: "flamrdevs-image",
     repo: "https://github.com/flamrdevs/flamrdevs-image",
-    tags: ["fastify", "node"],
+    tags: ["api", "fastify", "node"],
+  },
+  {
+    name: "none",
+    description: "Colorful SVG generation",
+    slug: "none",
+    repo: "https://github.com/flamrdevs/none",
+    tags: ["api", "deno", "hono", "node", "svg"],
   },
   {
     name: "klass",
-    description: "A class variant utility library",
+    description: "Class variant utility",
     slug: "klass",
     site: "https://klass.pages.dev",
     repo: "https://github.com/flamrdevs/klass",
     tags: ["npm", "preact", "react", "solid"],
   },
   {
+    name: "propsplit",
+    description: "Split props",
+    slug: "propsplit",
+    repo: "https://github.com/flamrdevs/propsplit",
+    tags: ["npm"],
+  },
+  {
     name: "ixclone",
-    description: "simple state management",
+    description: "Simple state management",
     slug: "ixclone",
     repo: "https://github.com/flamrdevs/ixclone",
     tags: ["npm"],
   },
   {
     name: "ixstore",
-    description: "simple state management",
+    description: "Simple state management",
     slug: "ixstore",
     repo: "https://github.com/flamrdevs/ixstore",
     tags: ["npm"],
   },
   {
     name: "ixstorage",
-    description: "simple storage",
+    description: "Simple storage",
     slug: "ixstorage",
     repo: "https://github.com/flamrdevs/ixstorage",
     tags: ["npm"],
   },
   {
     name: "ixstoragest",
-    description: "simple state management with storage",
+    description: "Simple state management with storage",
     slug: "ixstoragest",
     repo: "https://github.com/flamrdevs/ixstoragest",
     tags: ["npm"],
   },
   {
     name: "ixevent",
-    description: "simple event emitter",
+    description: "Simple event emitter",
     slug: "ixevent",
     repo: "https://github.com/flamrdevs/ixevent",
     tags: ["npm"],
   },
   {
     name: "ixbroadcastr",
-    description: "simple broadcast channel",
+    description: "Simple broadcast channel",
     slug: "ixbroadcastr",
     repo: "https://github.com/flamrdevs/ixbroadcastr",
     tags: ["npm"],
