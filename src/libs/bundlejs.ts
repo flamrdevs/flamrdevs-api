@@ -1,26 +1,25 @@
-import { cache, fetch, zod } from "~/libs/exports.ts";
+import { z } from "zod/mod.ts";
 
-type Bundle = zod.z.infer<typeof BundleSchema>;
+import { get } from "~/libs/fetch.ts";
 
-const BundleSchema = zod.z.object({
-  version: zod.z.string(),
-  size: zod.z.object({
-    type: zod.z.string(),
-    rawUncompressedSize: zod.z.number(),
-    uncompressedSize: zod.z.string(),
-    rawCompressedSize: zod.z.number(),
-    compressedSize: zod.z.string(),
-    size: zod.z.string(),
+type Bundle = z.infer<typeof BundleSchema>;
+
+const BundleSchema = z.object({
+  version: z.string(),
+  size: z.object({
+    type: z.string(),
+    rawUncompressedSize: z.number(),
+    uncompressedSize: z.string(),
+    rawCompressedSize: z.number(),
+    compressedSize: z.string(),
+    size: z.string(),
   }),
 });
 
-const BundleCache = cache.create<Bundle>();
+const base = (...paths: string[]) => ["https://deno.bundlejs.com"].concat(paths).join("/");
 
-const getBundle = async (name: string): Promise<[boolean, Bundle]> => {
-  const cached = BundleCache.get(name);
-  if (cached) return [true, cached];
-  return [false, BundleCache.set(name, await fetch.get<Bundle>(`https://deno.bundlejs.com/?q=${name}`))];
-};
+const $Bundle: Record<string, Bundle> = {};
+const getBundle = async (name: string): Promise<Bundle> => ($Bundle[name] ??= await get<Bundle>(base(`?q=${name}`)));
 
 export type { Bundle };
 export { BundleSchema };

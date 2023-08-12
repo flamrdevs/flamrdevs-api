@@ -1,11 +1,7 @@
-type FetchOptions = {
-  errMsg?: string;
-};
-
-const get = async <T>(url: string, { errMsg = "Failed to fetch" }: FetchOptions = {}) => {
-  const response = await fetch(url);
+const get = async <T>(url: string) => {
+  const response = await fetch(url, { method: "GET" });
   if (response.ok) return (await response.json()) as T;
-  throw new Error(errMsg);
+  throw new Error("Failed to fetch");
 };
 
 export { get };

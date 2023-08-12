@@ -1,68 +1,61 @@
-import { cache, fetch, zod } from "~/libs/exports.ts";
+import { z } from "zod/mod.ts";
 
-const UsernameSchema = zod.z
+import { get } from "~/libs/fetch.ts";
+
+const UsernameSchema = z
   .string({ required_error: "Username is required", invalid_type_error: "Username must be a string" })
   .min(1, { message: "Username must be at least 1 character long" })
   .max(39, { message: "Username can be up to 39 characters long" })
   .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/, { message: "Invalid GitHub username" })
   .regex(/^(?!.*-$)[\s\S]*$/, { message: "Username cannot end with a hyphen" });
 
-const ReponameSchema = zod.z
+const ReponameSchema = z
   .string({ required_error: "Repository name is required", invalid_type_error: "Repository name must be a string" })
   .min(1, { message: "Repository name must be at least 1 character long" })
   .max(100, { message: "Repository name can be up to 100 characters long" })
   .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,99}$/, { message: "Invalid repository name" })
   .regex(/^(?!.*-$)[\s\S]*$/, { message: "Repository name cannot end with a hyphen" });
 
-type User = zod.z.infer<typeof UserSchema>;
+type User = z.infer<typeof UserSchema>;
 
-const UserSchema = zod.z.object({
-  id: zod.z.number(),
-  name: zod.z.string(),
-  bio: zod.z.optional(zod.z.nullable(zod.z.string())),
-  followers: zod.z.number(),
-  following: zod.z.number(),
+const UserSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  bio: z.optional(z.nullable(z.string())),
+  followers: z.number(),
+  following: z.number(),
 });
 
-type Org = zod.z.infer<typeof OrgSchema>;
+type Org = z.infer<typeof OrgSchema>;
 
-const OrgSchema = zod.z.object({
-  id: zod.z.number(),
-  name: zod.z.string(),
-  description: zod.z.optional(zod.z.nullable(zod.z.string())),
-  followers: zod.z.number(),
-  following: zod.z.number(),
+const OrgSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.optional(z.nullable(z.string())),
+  followers: z.number(),
+  following: z.number(),
 });
 
-type Repo = zod.z.infer<typeof RepoSchema>;
+type Repo = z.infer<typeof RepoSchema>;
 
-const RepoSchema = zod.z.object({
-  id: zod.z.number(),
-  name: zod.z.string(),
-  description: zod.z.optional(zod.z.nullable(zod.z.string())),
-  stargazers_count: zod.z.number(),
+const RepoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.optional(z.nullable(z.string())),
+  stargazers_count: z.number(),
 });
 
-const UserCache = cache.create<User>();
-const OrgCache = cache.create<Org>();
-const RepoCache = cache.create<Repo>();
+const base = (...paths: string[]) => ["https://api.github.com"].concat(paths).join("/");
 
-const getUser = async (username: string): Promise<[boolean, User]> => {
-  const cached = UserCache.get(username);
-  if (cached) return [true, cached];
-  return [false, UserCache.set(username, await fetch.get<User>(`https://api.github.com/users/${username}`))];
-};
-const getOrg = async (org: string): Promise<[boolean, Org]> => {
-  const cached = OrgCache.get(org);
-  if (cached) return [true, cached];
-  return [false, OrgCache.set(org, await fetch.get<Org>(`https://api.github.com/orgs/${org}`))];
-};
-const getRepo = async (owner: string, repo: string): Promise<[boolean, Repo]> => {
-  const key = `${owner}/${repo}`;
-  const cached = RepoCache.get(key);
-  if (cached) return [true, cached];
-  return [false, RepoCache.set(key, await fetch.get<Repo>(`https://api.github.com/repos/${key}`))];
-};
+const $User: Record<string, User> = {};
+const getUser = async (username: string): Promise<User> => ($User[username] ??= await get<User>(base("users", username)));
+
+const $Org: Record<string, Org> = {};
+const getOrg = async (org: string): Promise<Org> => ($Org[org] ??= await get<Org>(base("orgs", org)));
+
+const $Repo: Record<string, Repo> = {};
+const getRepo = async (owner: string, repo: string): Promise<Repo> =>
+  ($Repo[`${owner}/${repo}`] ??= await get<Repo>(base("repos", owner, repo)));
 
 export type { User, Org, Repo };
 export { UsernameSchema, ReponameSchema };
