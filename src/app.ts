@@ -7,6 +7,7 @@ import { __PROD__ } from "~/const/env.ts";
 
 import { cachePlugin } from "~/libs/hono.ts";
 
+import routeTilde from "~/routes/~.ts";
 import routeContent from "~/routes/content.ts";
 import routeGithub from "~/routes/github.ts";
 import routeNPM from "~/routes/npm.ts";
@@ -24,6 +25,7 @@ app
 
   .use("*", cachePlugin())
 
+  .route("/~", routeTilde)
   .route("/content", routeContent)
   .route("/github", routeGithub)
   .route("/npm", routeNPM)
