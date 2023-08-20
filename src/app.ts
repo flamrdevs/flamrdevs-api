@@ -10,8 +10,6 @@ import { cachePlugin } from "~/libs/hono.ts";
 import routeTilde from "~/routes/~.ts";
 import routeContent from "~/routes/content.ts";
 import routeGithub from "~/routes/github.ts";
-import routeNPM from "~/routes/npm.ts";
-import routeBundlejs from "~/routes/bundlejs.ts";
 
 const app = new Hono();
 
@@ -28,8 +26,6 @@ app
   .route("/~", routeTilde)
   .route("/content", routeContent)
   .route("/github", routeGithub)
-  .route("/npm", routeNPM)
-  .route("/bundlejs", routeBundlejs)
 
   .get("/", (ctx) => ctx.json({ name: "api" }))
   .notFound((ctx) => ctx.json({ message: "Not found" }, 404))

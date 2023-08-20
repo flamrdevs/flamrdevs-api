@@ -1,6 +1,7 @@
 import { z } from "zod/mod.ts";
 
 import { get } from "~/libs/fetch.ts";
+import memo from "~/libs/memo.ts";
 
 const UsernameSchema = z
   .string({ required_error: "Username is required", invalid_type_error: "Username must be a string" })
@@ -47,15 +48,14 @@ const RepoSchema = z.object({
 
 const base = (...paths: string[]) => ["https://api.github.com"].concat(paths).join("/");
 
-const $User: Record<string, User> = {};
-const getUser = async (username: string): Promise<User> => ($User[username] ??= await get<User>(base("users", username)));
+const loadUser = memo<User>();
+const getUser = (username: string): Promise<User> => loadUser(username, () => get<User>(base("users", username)));
 
-const $Org: Record<string, Org> = {};
-const getOrg = async (org: string): Promise<Org> => ($Org[org] ??= await get<Org>(base("orgs", org)));
+const loadOrg = memo<Org>();
+const getOrg = (org: string): Promise<Org> => loadOrg(org, () => get<Org>(base("orgs", org)));
 
-const $Repo: Record<string, Repo> = {};
-const getRepo = async (owner: string, repo: string): Promise<Repo> =>
-  ($Repo[`${owner}/${repo}`] ??= await get<Repo>(base("repos", owner, repo)));
+const loadRepo = memo<Repo>();
+const getRepo = (owner: string, repo: string): Promise<Repo> => loadRepo(`${owner}/${repo}`, () => get<Repo>(base("repos", owner, repo)));
 
 export type { User, Org, Repo };
 export { UsernameSchema, ReponameSchema };
