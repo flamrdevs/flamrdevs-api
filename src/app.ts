@@ -1,5 +1,5 @@
 import { Hono } from "hono/mod.ts";
-import { cors, compress, logger } from "hono/middleware.ts";
+import { cors, compress, logger, secureHeaders } from "hono/middleware.ts";
 
 import { ZodError } from "zod/mod.ts";
 
@@ -20,6 +20,7 @@ if (__PROD__) {
 app
   .use("*", cors({ origin: "*" }))
   .use("*", compress())
+  .use("*", secureHeaders())
 
   .use("*", cachePlugin())
 
