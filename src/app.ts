@@ -13,16 +13,10 @@ import routeGithub from "~/routes/github.ts";
 
 const app = new Hono();
 
-if (__PROD__) {
-  app.use("*", logger());
-}
+if (!__PROD__) app.use("*", logger());
 
 app
-  .use("*", cors({ origin: "*" }))
-  .use("*", compress())
-  .use("*", secureHeaders())
-
-  .use("*", cachePlugin())
+  .use("*", cors({ origin: "*" }), compress(), secureHeaders(), cachePlugin())
 
   .route("/~", routeTilde)
   .route("/content", routeContent)
