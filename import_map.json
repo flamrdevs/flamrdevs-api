@@ -1,10 +1,10 @@
 {
   "imports": {
     "~/": "./src/",
-    "std/assert/": "https://deno.land/std@0.198.0/assert/",
+    "std/assert/": "https://deno.land/std@0.201.0/assert/",
     "dayjs": "https://esm.sh/dayjs@1.11.9",
     "nanoid": "https://esm.sh/nanoid@4.0.2",
-    "hono/": "https://deno.land/x/hono@v3.5.5/",
+    "hono/": "https://deno.land/x/hono@v3.5.8/",
     "zod/": "https://deno.land/x/zod@v3.22.2/"
   }
 }
