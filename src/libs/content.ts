@@ -4,6 +4,7 @@ type Tag =
   | "cloudflare-pages"
   | "deno"
   | "fastify"
+  | "github"
   | "hono"
   | "netlify"
   | "node"
@@ -58,6 +59,14 @@ const projects: IProject[] = [
     tags: ["api", "fastify", "node"],
   },
   {
+    name: "klass",
+    description: "Class variant utility",
+    slug: "klass",
+    site: "https://klass.pages.dev",
+    repo: "https://github.com/flamrdevs/klass",
+    tags: ["npm", "preact", "react", "solid"],
+  },
+  {
     name: "none",
     description: "Colorful SVG generation",
     slug: "none",
@@ -65,12 +74,18 @@ const projects: IProject[] = [
     tags: ["api", "deno", "hono", "node", "svg"],
   },
   {
-    name: "klass",
-    description: "Class variant utility",
-    slug: "klass",
-    site: "https://klass.pages.dev",
-    repo: "https://github.com/flamrdevs/klass",
-    tags: ["npm", "preact", "react", "solid"],
+    name: "hiiiits",
+    description: "Hits counter for GitHub",
+    slug: "hiiiits",
+    repo: "https://github.com/hiiiits/hiiiits",
+    tags: ["api", "deno", "github", "hono", "svg"],
+  },
+  {
+    name: "coloradix",
+    description: "color radix",
+    slug: "coloradix",
+    repo: "https://github.com/coloradix/coloradix",
+    tags: ["npm"],
   },
   {
     name: "propsplit",
