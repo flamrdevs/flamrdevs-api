@@ -21,9 +21,9 @@ type User = z.infer<typeof UserSchema>;
 
 const UserSchema = z.object({
   id: z.number(),
-  name: z.string(),
-  avatar_url: z.string().nullable().optional(),
-  bio: z.string().nullable().optional(),
+  name: z.string().nullable(),
+  avatar_url: z.string(),
+  bio: z.string().nullable(),
   followers: z.number(),
   following: z.number(),
 });
@@ -32,8 +32,8 @@ type Repo = z.infer<typeof RepoSchema>;
 
 const RepoSchema = z.object({
   id: z.number(),
-  name: z.string(),
-  description: z.string().nullable().optional(),
+  name: z.string().nullable(),
+  description: z.string().nullable(),
   stargazers_count: z.number(),
 });
 
