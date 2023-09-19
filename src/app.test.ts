@@ -7,7 +7,7 @@ import type { Schema } from "zod/mod.ts";
 
 import app from "~/app.ts";
 
-import { OrgSchema, RepoSchema, UserSchema } from "~/libs/github.ts";
+import { RepoSchema, UserSchema } from "~/libs/github.ts";
 
 type FetchCallback = (response: Response) => Promise<void>;
 
@@ -50,11 +50,9 @@ FETCH.GET(
 FETCH.GET("/~/last", 200);
 
 FETCH.GET("/github/users/flamrdevs", 200, callback.json.schema(UserSchema));
-FETCH.GET("/github/orgs/indonesia-api", 200, callback.json.schema(OrgSchema));
 FETCH.GET("/github/repos/flamrdevs/klass", 200, callback.json.schema(RepoSchema));
 
 FETCH.GET("/github/users/~flamrdevs", 400);
-FETCH.GET("/github/orgs/~indonesia-api", 400);
 FETCH.GET("/github/repos/~flamrdevs/~klass", 400);
 
 FETCH.GET("/", 200);
