@@ -22,17 +22,8 @@ type User = z.infer<typeof UserSchema>;
 const UserSchema = z.object({
   id: z.number(),
   name: z.string(),
-  bio: z.optional(z.nullable(z.string())),
-  followers: z.number(),
-  following: z.number(),
-});
-
-type Org = z.infer<typeof OrgSchema>;
-
-const OrgSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  description: z.optional(z.nullable(z.string())),
+  avatar_url: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
   followers: z.number(),
   following: z.number(),
 });
@@ -42,7 +33,7 @@ type Repo = z.infer<typeof RepoSchema>;
 const RepoSchema = z.object({
   id: z.number(),
   name: z.string(),
-  description: z.optional(z.nullable(z.string())),
+  description: z.string().nullable().optional(),
   stargazers_count: z.number(),
 });
 
@@ -51,13 +42,10 @@ const base = (...paths: string[]) => ["https://api.github.com"].concat(paths).jo
 const loadUser = memo<User>();
 const getUser = (username: string): Promise<User> => loadUser(username, () => get<User>(base("users", username)));
 
-const loadOrg = memo<Org>();
-const getOrg = (org: string): Promise<Org> => loadOrg(org, () => get<Org>(base("orgs", org)));
-
 const loadRepo = memo<Repo>();
 const getRepo = (owner: string, repo: string): Promise<Repo> => loadRepo(`${owner}/${repo}`, () => get<Repo>(base("repos", owner, repo)));
 
-export type { User, Org, Repo };
+export type { User, Repo };
 export { UsernameSchema, ReponameSchema };
-export { UserSchema, OrgSchema, RepoSchema };
-export { getUser, getOrg, getRepo };
+export { UserSchema, RepoSchema };
+export { getUser, getRepo };
