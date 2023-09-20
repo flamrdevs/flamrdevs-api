@@ -1,9 +1,9 @@
 {
   "imports": {
     "~/": "./src/",
-    "std/assert/": "https://deno.land/std@0.201.0/assert/",
-    "dayjs": "https://esm.sh/dayjs@1.11.9",
-    "nanoid": "https://esm.sh/nanoid@4.0.2",
+    "std/assert/": "https://deno.land/std@0.202.0/assert/",
+    "dayjs": "https://esm.sh/dayjs@1.11.10",
+    "nanoid": "https://esm.sh/nanoid@5.0.1",
     "hono/": "https://deno.land/x/hono@v3.6.3/",
     "zod/": "https://deno.land/x/zod@v3.22.2/"
   }
