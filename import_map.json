@@ -3,8 +3,7 @@
     "~/": "./src/",
     "std/assert/": "https://deno.land/std@0.202.0/assert/",
     "dayjs": "https://esm.sh/dayjs@1.11.10",
-    "nanoid": "https://esm.sh/nanoid@5.0.1",
-    "hono/": "https://deno.land/x/hono@v3.7.0/",
+    "hono/": "https://deno.land/x/hono@v3.7.2/",
     "zod/": "https://deno.land/x/zod@v3.22.2/"
   }
 }
