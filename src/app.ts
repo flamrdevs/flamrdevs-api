@@ -1,11 +1,10 @@
 import { Hono } from "hono/mod.ts";
 import { cors, compress, logger, secureHeaders } from "hono/middleware.ts";
 
-import { ZodError } from "zod/mod.ts";
-
 import { __PROD__ } from "~/const/env.ts";
 
 import { cachePlugin } from "~/libs/hono.ts";
+import * as err from "~/libs/err.ts";
 
 import routeTilde from "~/routes/~.ts";
 import routeContent from "~/routes/content.ts";
@@ -28,9 +27,9 @@ app
     let status = 500;
     let message = "Internal server error";
 
-    if (error instanceof ZodError) {
-      status = 400;
-      message = error.issues.at(0)?.message ?? "Bad request";
+    if (error instanceof err.APIError) {
+      status = error.status;
+      message = error.message;
     } else if (error instanceof Error) {
       message = error.message;
     }

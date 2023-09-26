@@ -2,12 +2,11 @@ Deno.env.set("MODE", "development");
 
 import { assertEquals } from "std/assert/assert_equals.ts";
 
-import { z } from "zod/mod.ts";
-import type { Schema } from "zod/mod.ts";
+import * as v from "~/libs/v.ts";
 
 import app from "~/app.ts";
 
-import { RepoSchema, UserSchema } from "~/libs/github.ts";
+import { parseUser, parseRepo } from "~/libs/github.ts";
 
 type FetchCallback = (response: Response) => Promise<void>;
 
@@ -25,32 +24,56 @@ const FETCH = {
 
 const callback = {
   json: {
-    schema: <S extends Schema>(schema: S) =>
-      (async (response) => assertEquals((await schema.safeParseAsync(await response.json())).success, true)) satisfies FetchCallback,
+    v: (fn: (value: unknown) => boolean) => (async (response) => assertEquals(fn(await response.json()), true)) satisfies FetchCallback,
   },
 };
 
 FETCH.GET(
   "/content/projects",
   200,
-  callback.json.schema(
-    z.array(
-      z.object({
-        name: z.string(),
-        description: z.string(),
-        slug: z.string(),
-        site: z.string().optional(),
-        repo: z.string().optional(),
-        tags: z.array(z.string()),
-      })
-    )
+  callback.json.v(
+    (data) =>
+      Array.isArray(data) &&
+      data.every(
+        (element) =>
+          v.is_object(element) &&
+          v.is_in_object_and_type("name", element, v.is_string) &&
+          v.is_in_object_and_type("description", element, v.is_string) &&
+          v.is_in_object_and_type("slug", element, v.is_string) &&
+          v.is_optional_in_object_and_type("site", element, v.is_string) &&
+          v.is_optional_in_object_and_type("repo", element, v.is_string) &&
+          v.is_in_object_and_type("tags", element, v.is_array) &&
+          v.is_every(element.tags, v.is_string)
+      )
   )
 );
 
 FETCH.GET("/~/last", 200);
 
-FETCH.GET("/github/users/flamrdevs", 200, callback.json.schema(UserSchema));
-FETCH.GET("/github/repos/flamrdevs/klass", 200, callback.json.schema(RepoSchema));
+FETCH.GET(
+  "/github/users/flamrdevs",
+  200,
+  callback.json.v((value) => {
+    try {
+      parseUser(value);
+      return true;
+    } catch {
+      return false;
+    }
+  })
+);
+FETCH.GET(
+  "/github/repos/flamrdevs/klass",
+  200,
+  callback.json.v((value) => {
+    try {
+      parseRepo(value);
+      return true;
+    } catch {
+      return false;
+    }
+  })
+);
 
 FETCH.GET("/github/users/~flamrdevs", 400);
 FETCH.GET("/github/repos/~flamrdevs/~klass", 400);
