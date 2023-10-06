@@ -5,3 +5,4 @@ export class APIError extends Error {
 }
 
 export const badRequest = (message = "Bad request") => new APIError(400, message);
+export const unauthorized = (message = "Unauthorized") => new APIError(401, message);

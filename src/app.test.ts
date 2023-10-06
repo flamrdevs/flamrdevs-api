@@ -28,6 +28,27 @@ const callback = {
   },
 };
 
+const form = (obj: object) => {
+  const formData = new FormData();
+  Object.entries(obj).forEach(([key, value]) => formData.append(key, value));
+  return formData;
+};
+
+Deno.test(`Auth`, async () => {
+  const res_sign = await app.request("/auth/sign", { method: "POST", body: form({ key: "local-auth-key" }) });
+  assertEquals(res_sign.status, 200);
+  const json_sign = await res_sign.json();
+  const schema_json_sign = v.object({ token: v.string() });
+  assertEquals(v.is(schema_json_sign, json_sign), true);
+  const { token } = v.parse(schema_json_sign, json_sign);
+
+  const res_verify = await app.request("/auth/verify", { method: "POST", body: form({ token }) });
+  assertEquals(res_verify.status, 200);
+
+  const res_decode = await app.request("/auth/decode", { method: "POST", body: form({ token }) });
+  assertEquals(res_decode.status, 200);
+});
+
 FETCH.GET(
   "/content/projects",
   200,

@@ -2,6 +2,8 @@ declare global {
   interface ExtendedEnv {
     MODE?: "development" | "production";
     PORT?: string;
+    AUTH_KEY?: string;
+    JWT_SECRET?: string;
   }
 
   namespace Deno {

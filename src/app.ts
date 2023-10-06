@@ -5,10 +5,10 @@ import * as v from "valibot/mod.ts";
 
 import { __PROD__ } from "~/const/env.ts";
 
-import { cachePlugin } from "~/libs/hono.ts";
 import * as err from "~/libs/err.ts";
 
 import routeTilde from "~/routes/~.ts";
+import routeAuth from "~/routes/auth.ts";
 import routeContent from "~/routes/content.ts";
 import routeGithub from "~/routes/github.ts";
 
@@ -17,9 +17,10 @@ const app = new Hono();
 if (!__PROD__) app.use("*", logger());
 
 app
-  .use("*", cors({ origin: "*" }), compress(), secureHeaders(), cachePlugin())
+  .use("*", cors({ origin: "*" }), compress(), secureHeaders())
 
   .route("/~", routeTilde)
+  .route("/auth", routeAuth)
   .route("/content", routeContent)
   .route("/github", routeGithub)
 
