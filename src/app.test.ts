@@ -2,7 +2,7 @@ Deno.env.set("MODE", "development");
 
 import { assertEquals } from "std/assert/assert_equals.ts";
 
-import * as v from "~/libs/v.ts";
+import * as v from "valibot/mod.ts";
 
 import app from "~/app.ts";
 
@@ -31,20 +31,20 @@ const callback = {
 FETCH.GET(
   "/content/projects",
   200,
-  callback.json.v(
-    (data) =>
-      Array.isArray(data) &&
-      data.every(
-        (element) =>
-          v.is_object(element) &&
-          v.is_in_object_and_type("name", element, v.is_string) &&
-          v.is_in_object_and_type("description", element, v.is_string) &&
-          v.is_in_object_and_type("slug", element, v.is_string) &&
-          v.is_optional_in_object_and_type("site", element, v.is_string) &&
-          v.is_optional_in_object_and_type("repo", element, v.is_string) &&
-          v.is_in_object_and_type("tags", element, v.is_array) &&
-          v.is_every(element.tags, v.is_string)
-      )
+  callback.json.v((data) =>
+    v.is(
+      v.array(
+        v.object({
+          name: v.string(),
+          description: v.string(),
+          slug: v.string(),
+          site: v.optional(v.string()),
+          repo: v.optional(v.string()),
+          tags: v.array(v.string()),
+        })
+      ),
+      data
+    )
   )
 );
 

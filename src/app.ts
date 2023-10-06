@@ -1,6 +1,8 @@
 import { Hono } from "hono/mod.ts";
 import { cors, compress, logger, secureHeaders } from "hono/middleware.ts";
 
+import * as v from "valibot/mod.ts";
+
 import { __PROD__ } from "~/const/env.ts";
 
 import { cachePlugin } from "~/libs/hono.ts";
@@ -30,6 +32,9 @@ app
     if (error instanceof err.APIError) {
       status = error.status;
       message = error.message;
+    } else if (error instanceof v.ValiError) {
+      status = 400;
+      message = error.issues.at(0)?.message ?? error.message;
     } else if (error instanceof Error) {
       message = error.message;
     }
