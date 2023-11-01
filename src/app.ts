@@ -3,8 +3,6 @@ import { cors, compress, logger, secureHeaders } from "hono/middleware.ts";
 
 import * as v from "valibot/mod.ts";
 
-import { __PROD__ } from "~/const/env.ts";
-
 import * as err from "~/libs/err.ts";
 
 import routeTilde from "~/routes/~.ts";
@@ -12,11 +10,8 @@ import routeAuth from "~/routes/auth.ts";
 import routeContent from "~/routes/content.ts";
 import routeGithub from "~/routes/github.ts";
 
-const app = new Hono();
-
-if (!__PROD__) app.use("*", logger());
-
-app
+const app = new Hono()
+  .use("*", logger())
   .use("*", cors({ origin: "*" }))
 
   .get("/ping", (ctx) => ctx.text("pong", 200))
