@@ -17,7 +17,11 @@ const app = new Hono();
 if (!__PROD__) app.use("*", logger());
 
 app
-  .use("*", cors({ origin: "*" }), compress(), secureHeaders())
+  .use("*", cors({ origin: "*" }))
+
+  .get("/ping", (ctx) => ctx.text("pong", 200))
+
+  .use("*", compress(), secureHeaders())
 
   .route("/~", routeTilde)
   .route("/auth", routeAuth)
