@@ -100,5 +100,17 @@ FETCH.GET("/github/users/~flamrdevs", 400);
 FETCH.GET("/github/repos/~flamrdevs/~klass", 400);
 
 FETCH.GET("/", 200);
-FETCH.GET("/ping", 200);
+FETCH.GET(
+  "/health",
+  200,
+  callback.json.v((value) => {
+    const { success } = v.safeParse(
+      v.object({
+        ok: v.boolean(),
+      }),
+      value
+    );
+    return success;
+  })
+);
 FETCH.GET("/not-found", 404);

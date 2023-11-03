@@ -14,7 +14,7 @@ const app = new Hono()
   .use("*", logger())
   .use("*", cors({ origin: "*" }))
 
-  .get("/ping", (ctx) => ctx.text("pong", 200))
+  .get("/health", (ctx) => ctx.json({ ok: true }, 200))
 
   .use("*", compress(), secureHeaders())
 
