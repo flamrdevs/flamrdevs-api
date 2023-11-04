@@ -6,8 +6,6 @@ import * as v from "valibot/mod.ts";
 
 import app from "~/app.ts";
 
-import { parseUser, parseRepo } from "~/libs/github.ts";
-
 type FetchCallback = (response: Response) => Promise<void>;
 
 const FETCH = {
@@ -35,7 +33,7 @@ const form = (obj: object) => {
 };
 
 Deno.test(`Auth`, async () => {
-  const res_sign = await app.request("/auth/sign", { method: "POST", body: form({ key: "local-auth-key" }) });
+  const res_sign = await app.request("/auth/sign", { method: "POST", body: form({ secret: "local-auth-secret" }) });
   assertEquals(res_sign.status, 200);
   const json_sign = await res_sign.json();
   const schema_json_sign = v.object({ token: v.string() });
@@ -49,55 +47,7 @@ Deno.test(`Auth`, async () => {
   assertEquals(res_decode.status, 200);
 });
 
-FETCH.GET(
-  "/content/projects",
-  200,
-  callback.json.v((data) =>
-    v.is(
-      v.array(
-        v.object({
-          name: v.string(),
-          description: v.string(),
-          slug: v.string(),
-          site: v.optional(v.string()),
-          repo: v.optional(v.string()),
-          tags: v.array(v.string()),
-        })
-      ),
-      data
-    )
-  )
-);
-
 FETCH.GET("/~/last", 200);
-
-FETCH.GET(
-  "/github/users/flamrdevs",
-  200,
-  callback.json.v((value) => {
-    try {
-      parseUser(value);
-      return true;
-    } catch {
-      return false;
-    }
-  })
-);
-FETCH.GET(
-  "/github/repos/flamrdevs/klass",
-  200,
-  callback.json.v((value) => {
-    try {
-      parseRepo(value);
-      return true;
-    } catch {
-      return false;
-    }
-  })
-);
-
-FETCH.GET("/github/users/~flamrdevs", 400);
-FETCH.GET("/github/repos/~flamrdevs/~klass", 400);
 
 FETCH.GET("/", 200);
 FETCH.GET(

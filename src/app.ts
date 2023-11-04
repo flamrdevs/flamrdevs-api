@@ -3,19 +3,16 @@ import { cors, compress, logger, secureHeaders } from "hono/middleware.ts";
 
 import * as v from "valibot/mod.ts";
 
-import * as err from "~/libs/err.ts";
+import * as error from "~/libs/error.ts";
 
 import routeTilde from "~/routes/~.ts";
 import routeAuth from "~/routes/auth.ts";
-import routeContent from "~/routes/content.ts";
-import routeGithub from "~/routes/github.ts";
 
 const app = new Hono()
   .use("*", logger())
   .use("*", cors({ origin: "*" }))
 
   .get("/health", (ctx) => {
-    console.log({ url: ctx.req.url });
     return ctx.json({ ok: true }, 200);
   })
 
@@ -23,23 +20,21 @@ const app = new Hono()
 
   .route("/~", routeTilde)
   .route("/auth", routeAuth)
-  .route("/content", routeContent)
-  .route("/github", routeGithub)
 
   .get("/", (ctx) => ctx.json({ name: "api" }))
   .notFound((ctx) => ctx.json({ message: "Not found" }, 404))
-  .onError((error: unknown, ctx) => {
+  .onError((_error: unknown, ctx) => {
     let status = 500;
     let message = "Internal server error";
 
-    if (error instanceof err.APIError) {
-      status = error.status;
-      message = error.message;
-    } else if (error instanceof v.ValiError) {
+    if (_error instanceof error.API) {
+      status = _error.status;
+      message = _error.message;
+    } else if (_error instanceof v.ValiError) {
       status = 400;
-      message = error.issues.at(0)?.message ?? error.message;
-    } else if (error instanceof Error) {
-      message = error.message;
+      message = _error.issues.at(0)?.message ?? _error.message;
+    } else if (_error instanceof Error) {
+      message = _error.message;
     }
 
     return ctx.json({ message }, status);

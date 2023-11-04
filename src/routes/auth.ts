@@ -1,31 +1,21 @@
-import { decode, sign, verify } from "hono/utils/jwt/jwt.ts";
-
 import { route } from "~/libs/hono.ts";
 
-import * as err from "~/libs/err.ts";
-
-const AUTH_KEY = Deno.env.get("AUTH_KEY") ?? "local-auth-key";
-const JWT_SECRET = Deno.env.get("JWT_SECRET") ?? "local-jwt-secret";
+import * as auth from "~/libs/auth.ts";
+import * as error from "~/libs/error.ts";
 
 export default route((x) =>
   x
 
     .post("/decode", async (ctx) => {
-      const { token } = await ctx.req.parseBody();
-      if (typeof token !== "string") throw err.badRequest();
-      return ctx.json(decode(token));
+      return ctx.json(auth.handleDecode((await ctx.req.parseBody()).token));
     })
 
     .post("/sign", async (ctx) => {
-      const { key } = await ctx.req.parseBody();
-      if (key !== AUTH_KEY) throw err.unauthorized();
-      return ctx.json({ token: await sign({ key }, JWT_SECRET) });
+      return ctx.json({ token: await auth.handleSign((await ctx.req.parseBody()).secret) });
     })
 
     .post("/verify", async (ctx) => {
-      const { token } = await ctx.req.parseBody();
-      if (typeof token !== "string") throw err.badRequest();
-      if (await verify(token, JWT_SECRET)) return ctx.json({ ok: true });
-      throw err.unauthorized();
+      if (await auth.handleVerify((await ctx.req.parseBody()).token)) return ctx.json({ ok: true });
+      throw error.unauthorized();
     })
 );
