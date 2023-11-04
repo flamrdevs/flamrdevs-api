@@ -14,7 +14,10 @@ const app = new Hono()
   .use("*", logger())
   .use("*", cors({ origin: "*" }))
 
-  .get("/health", (ctx) => ctx.json({ ok: true }, 200))
+  .get("/health", (ctx) => {
+    console.log({ url: ctx.req.url });
+    return ctx.json({ ok: true }, 200);
+  })
 
   .use("*", compress(), secureHeaders())
 
