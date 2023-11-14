@@ -1,9 +1,9 @@
 {
   "imports": {
     "~/": "./src/",
-    "std/assert/": "https://deno.land/std@0.205.0/assert/",
+    "std/assert/": "https://deno.land/std@0.206.0/assert/",
     "dayjs": "https://esm.sh/dayjs@1.11.10",
-    "hono/": "https://deno.land/x/hono@v3.9.2/",
+    "hono/": "https://deno.land/x/hono@v3.10.0/",
     "valibot/": "https://deno.land/x/valibot@v0.19.0/"
   }
 }
